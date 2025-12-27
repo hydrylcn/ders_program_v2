@@ -208,7 +208,7 @@ class App(ctk.CTk):
             "TRIAL_TIMEOUT": int(self.timeout_ent.get() or 10),
             "SPECIAL_CONSTRAINTS": spec_cons,
             "MAX_DAYS_PER_LECTURER": int(self.max_days_ent.get() or 3),
-            "MIN_SLOT_GAP": int(self.min_gap_ent.get() or 1)
+            "MIN_SLOT_GAP": int(self.min_gap_ent.get() or 1) + 1
         }
         threading.Thread(target=self.run_logic, daemon=True).start()
 
