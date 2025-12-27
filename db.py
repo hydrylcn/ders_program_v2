@@ -85,7 +85,5 @@ def veritabanini_guncelle(excel_dosyasi_yolu):
         conn.close()
 
 
-# Geliştirme aşamasında test etmek istersen burası çalışır:
 if __name__ == "__main__":
-    # Test için varsayılan bir dosya adı
     veritabanini_guncelle("dersler.xlsx")

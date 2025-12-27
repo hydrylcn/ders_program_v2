@@ -1,0 +1,1351 @@
+
+        <!DOCTYPE html>
+        <html lang="tr">
+        <head>
+            <meta charset="UTF-8">
+            <title>Haftalık Ders Programı - Takvim</title>
+            <style>
+                body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; }
+                .container { max-width: 1400px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+                h1 { text-align: center; color: #1a73e8; margin-bottom: 20px; }
+
+                .filters { display: flex; gap: 15px; justify-content: center; background: #fff; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #e0e0e0; position: sticky; top: 10px; z-index: 1000; }
+                .filter-group { display: flex; flex-direction: column; }
+                label { font-weight: 600; margin-bottom: 5px; font-size: 13px; color: #666; }
+                select { padding: 8px 12px; border-radius: 5px; border: 1px solid #ddd; min-width: 200px; }
+
+                table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+                th { background-color: #1a73e8; color: white; padding: 12px; border: 1px solid #1565c0; font-size: 14px; }
+
+                /* DEĞİŞİKLİK BURADA: td yüksekliği sabitlendi */
+                td { border: 1px solid #e0e0e0; vertical-align: top; padding: 5px; background: #fafafa; height: 110px; }
+
+                .time-cell { background: #f8f9fa; font-weight: bold; text-align: center; width: 80px; color: #333; vertical-align: middle; height: auto; }
+
+                .lesson-card {
+                    background: #ffffff;
+                    border-left: 4px solid #1a73e8;
+                    margin-bottom: 8px;
+                    padding: 8px;
+                    border-radius: 4px;
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.05);
+                    font-size: 12px;
+                    transition: transform 0.2s;
+                }
+                .lesson-card:hover { transform: scale(1.02); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+                .lesson-name { font-weight: bold; color: #1a73e8; display: block; margin-bottom: 4px; border-bottom: 1px solid #eee; padding-bottom: 2px; }
+                .lesson-info { color: #555; line-height: 1.4; }
+                .teacher-name { color: #2e7d32; font-weight: 600; font-style: italic; }
+                .class-badge { display: inline-block; background: #e8f0fe; color: #1967d2; padding: 2px 6px; border-radius: 10px; font-size: 10px; margin-top: 4px; font-weight: bold; }
+            </style>
+        </head>
+        <body>
+        <div class="container">
+            <h1>📅 İşletme Bölümü Haftalık Ders Programı</h1>
+
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Öğretim Elemanı:</label>
+                    <select id="teacherSelect" onchange="filterSchedule()">
+                        <option value="all">Tüm Hocalar</option>
+                        <option value="Araş. Gör. Dr. Begüm KANAT TİRYAKİ">Araş. Gör. Dr. Begüm KANAT TİRYAKİ</option><option value="Araş. Gör. Dr. Özgür BABACAN">Araş. Gör. Dr. Özgür BABACAN</option><option value="Doç. Dr. Aydın KOÇAK">Doç. Dr. Aydın KOÇAK</option><option value="Doç. Dr. Burcu ŞENTÜRK YILDIZ">Doç. Dr. Burcu ŞENTÜRK YILDIZ</option><option value="Doç. Dr. Elif ÜSTÜNDAĞLI ERTEN">Doç. Dr. Elif ÜSTÜNDAĞLI ERTEN</option><option value="Doç. Dr. Haydar YALÇIN">Doç. Dr. Haydar YALÇIN</option><option value="Doç. Dr. Sema AYDIN">Doç. Dr. Sema AYDIN</option><option value="Doç. Dr. U. Gökay ÇİÇEKLİ">Doç. Dr. U. Gökay ÇİÇEKLİ</option><option value="Doç. Dr. İnanç KABASAKAL">Doç. Dr. İnanç KABASAKAL</option><option value="Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU">Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU</option><option value="Dr. Öğr. Üyesi Esin GÜRBÜZ">Dr. Öğr. Üyesi Esin GÜRBÜZ</option><option value="Dr. Öğr. Üyesi Hakan ERKAL">Dr. Öğr. Üyesi Hakan ERKAL</option><option value="Dr. Öğr. Üyesi Miray BAYBARS">Dr. Öğr. Üyesi Miray BAYBARS</option><option value="Dr. Öğr. Üyesi Ş. Sertaç ÇAKI">Dr. Öğr. Üyesi Ş. Sertaç ÇAKI</option><option value="Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ">Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ</option><option value="Prof. Dr. Aykan CANDEMİR">Prof. Dr. Aykan CANDEMİR</option><option value="Prof. Dr. Ayla Özhan DEDEOĞLU">Prof. Dr. Ayla Özhan DEDEOĞLU</option><option value="Prof. Dr. Burak ÇAPRAZ">Prof. Dr. Burak ÇAPRAZ</option><option value="Prof. Dr. Burcu ARACIOĞLU">Prof. Dr. Burcu ARACIOĞLU</option><option value="Prof. Dr. Derya İLİC">Prof. Dr. Derya İLİC</option><option value="Prof. Dr. Dilek DEMİRHAN">Prof. Dr. Dilek DEMİRHAN</option><option value="Prof. Dr. G. Nazan GÜNAY">Prof. Dr. G. Nazan GÜNAY</option><option value="Prof. Dr. Haluk SOYUER">Prof. Dr. Haluk SOYUER</option><option value="Prof. Dr. Keti VENTURA">Prof. Dr. Keti VENTURA</option><option value="Prof. Dr. Murat KOCAMAZ">Prof. Dr. Murat KOCAMAZ</option><option value="Prof. Dr. Türker SUSMUŞ">Prof. Dr. Türker SUSMUŞ</option><option value="Prof. Dr. İpek KAZANÇOĞLU">Prof. Dr. İpek KAZANÇOĞLU</option><option value="ÖĞRETMEN 1">ÖĞRETMEN 1</option><option value="ÖĞRETMEN 2">ÖĞRETMEN 2</option><option value="ÖĞRETMEN 3">ÖĞRETMEN 3</option><option value="ÖĞRETMEN 4">ÖĞRETMEN 4</option><option value="ÖĞRETMEN 5">ÖĞRETMEN 5</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Sınıf / Grup:</label>
+                    <select id="classSelect" onchange="filterSchedule()">
+                        <option value="all">Tüm Sınıflar</option>
+                        <option value="0. Sınıf">0. Sınıf</option><option value="1. Sınıf">1. Sınıf</option><option value="2. Sınıf">2. Sınıf</option><option value="3. Sınıf">3. Sınıf</option><option value="4. Sınıf">4. Sınıf</option><option value="Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz">Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz</option><option value="Muhasebe ve Finansman İ.Ö. Tezsiz">Muhasebe ve Finansman İ.Ö. Tezsiz</option><option value="Pazarlama Tezli">Pazarlama Tezli</option><option value="Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz">Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz</option><option value="Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz">Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz</option><option value="Uzaktan Öğretim İşletme Tezsiz">Uzaktan Öğretim İşletme Tezsiz</option><option value="Yönetim Bilimi ve Organizasyon Tezli">Yönetim Bilimi ve Organizasyon Tezli</option><option value="Yönetim ve Organizasyon Doktora">Yönetim ve Organizasyon Doktora</option><option value="Üretim Yönetimi Tezli">Üretim Yönetimi Tezli</option><option value="Üretim Yönetimi ve Sayısal Yöntemler Doktora">Üretim Yönetimi ve Sayısal Yöntemler Doktora</option><option value="Üretim Yönetimi ve Sayısal Yöntemler Tezli">Üretim Yönetimi ve Sayısal Yöntemler Tezli</option><option value="İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz">İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz</option><option value="İşletme Doktora">İşletme Doktora</option><option value="İşletme Tezli">İşletme Tezli</option><option value="İşletme İ.Ö. Tezsiz">İşletme İ.Ö. Tezsiz</option>
+                    </select>
+                </div>
+            </div>
+
+            <table id="scheduleTable">
+                <thead>
+                    <tr>
+                        <th style="width: 80px;">Saat</th>
+                        <th>Pazartesi</th><th>Salı</th><th>Çarşamba</th><th>Perşembe</th><th>Cuma</th>
+                    </tr>
+                </thead>
+                <tbody>
+        <tr><td class='time-cell'>09:00-12:00</td><td>
+                    <div class="lesson-card" data-teacher="Araş. Gör. Dr. Özgür BABACAN" data-class="İşletme Tezli">
+                        <span class="lesson-name">Yatırım Analizi ve Portföy Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 203<br>
+                            👨‍🏫 <span class="teacher-name">Araş. Gör. Dr. Özgür BABACAN</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Burcu ŞENTÜRK YILDIZ" data-class="Yönetim Bilimi ve Organizasyon Tezli">
+                        <span class="lesson-name">Örgüt Sosyolojisi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 111<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Burcu ŞENTÜRK YILDIZ</span><br>
+                            <span class="class-badge">Yönetim Bilimi ve Organizasyon Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. U. Gökay ÇİÇEKLİ" data-class="Üretim Yönetimi ve Sayısal Yöntemler Doktora">
+                        <span class="lesson-name">Modelleme ve Optimizasyon</span>
+                        <div class="lesson-info">
+                            📍 Derslik 301<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. U. Gökay ÇİÇEKLİ</span><br>
+                            <span class="class-badge">Üretim Yönetimi ve Sayısal Yöntemler Doktora</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU" data-class="3. Sınıf">
+                        <span class="lesson-name">Araştırma Yöntemleri (Tek)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 302<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Burcu ARACIOĞLU" data-class="Üretim Yönetimi Tezli">
+                        <span class="lesson-name">Tedarik Zinciri Yönetimi ve Lojistik</span>
+                        <div class="lesson-info">
+                            📍 Derslik 108<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Burcu ARACIOĞLU</span><br>
+                            <span class="class-badge">Üretim Yönetimi Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. İpek KAZANÇOĞLU" data-class="Pazarlama Tezli">
+                        <span class="lesson-name">Endüstriyel Pazarlama</span>
+                        <div class="lesson-info">
+                            📍 Derslik 205<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. İpek KAZANÇOĞLU</span><br>
+                            <span class="class-badge">Pazarlama Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Türker SUSMUŞ" data-class="0. Sınıf">
+                        <span class="lesson-name">Muhasebe I (Örgün + İ.Ö.)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 104<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Türker SUSMUŞ</span><br>
+                            <span class="class-badge">0. Sınıf</span>
+                        </div>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. Haluk SOYUER" data-class="Üretim Yönetimi ve Sayısal Yöntemler Doktora">
+                        <span class="lesson-name">Üretim İşlemler Stratejisi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 201<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Haluk SOYUER</span><br>
+                            <span class="class-badge">Üretim Yönetimi ve Sayısal Yöntemler Doktora</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Burcu ŞENTÜRK YILDIZ" data-class="Yönetim ve Organizasyon Doktora">
+                        <span class="lesson-name">İleri Örgüt Sosyolojisi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 110<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Burcu ŞENTÜRK YILDIZ</span><br>
+                            <span class="class-badge">Yönetim ve Organizasyon Doktora</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Haydar YALÇIN" data-class="İşletme Tezli">
+                        <span class="lesson-name">Teknoloji Yönetiminin Esasları</span>
+                        <div class="lesson-info">
+                            📍 Derslik 104<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Haydar YALÇIN</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Miray BAYBARS" data-class="4. Sınıf">
+                        <span class="lesson-name">Retailing I</span>
+                        <div class="lesson-info">
+                            📍 Derslik 211<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Miray BAYBARS</span><br>
+                            <span class="class-badge">4. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Burak ÇAPRAZ" data-class="Yönetim Bilimi ve Organizasyon Tezli">
+                        <span class="lesson-name">Bilimsel Araştırma Yöntemleri ve Etik</span>
+                        <div class="lesson-info">
+                            📍 Derslik 209<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Burak ÇAPRAZ</span><br>
+                            <span class="class-badge">Yönetim Bilimi ve Organizasyon Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Burcu ARACIOĞLU" data-class="3. Sınıf">
+                        <span class="lesson-name">Küresel Tedarik Zinciri ve Lojistik</span>
+                        <div class="lesson-info">
+                            📍 Derslik 202<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Burcu ARACIOĞLU</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. G. Nazan GÜNAY" data-class="İşletme Doktora">
+                        <span class="lesson-name">Pazarlama Kuramı</span>
+                        <div class="lesson-info">
+                            📍 Derslik 211<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. G. Nazan GÜNAY</span><br>
+                            <span class="class-badge">İşletme Doktora</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Aydın KOÇAK" data-class="Üretim Yönetimi ve Sayısal Yöntemler Doktora">
+                        <span class="lesson-name">Stratejik Stok Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 303<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Aydın KOÇAK</span><br>
+                            <span class="class-badge">Üretim Yönetimi ve Sayısal Yöntemler Doktora</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Sema AYDIN" data-class="0. Sınıf">
+                        <span class="lesson-name">Ticaret Hukuku (Tasfiye)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 301<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Sema AYDIN</span><br>
+                            <span class="class-badge">0. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU" data-class="İşletme Tezli">
+                        <span class="lesson-name">Bilimsel Araştırma Yöntemleri ve Etik</span>
+                        <div class="lesson-info">
+                            📍 Derslik 109<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Ş. Sertaç ÇAKI" data-class="3. Sınıf">
+                        <span class="lesson-name">Mali Tablolar Analizi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 208<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Ş. Sertaç ÇAKI</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. İpek KAZANÇOĞLU" data-class="İşletme Tezli">
+                        <span class="lesson-name">Endüstriyel Pazarlama</span>
+                        <div class="lesson-info">
+                            📍 Derslik 210<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. İpek KAZANÇOĞLU</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Murat KOCAMAZ" data-class="Üretim Yönetimi Tezli">
+                        <span class="lesson-name">Üretim Çizelgeleme</span>
+                        <div class="lesson-info">
+                            📍 Derslik 101<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Murat KOCAMAZ</span><br>
+                            <span class="class-badge">Üretim Yönetimi Tezli</span>
+                        </div>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Araş. Gör. Dr. Özgür BABACAN" data-class="3. Sınıf">
+                        <span class="lesson-name">Yatırım Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 303<br>
+                            👨‍🏫 <span class="teacher-name">Araş. Gör. Dr. Özgür BABACAN</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. İnanç KABASAKAL" data-class="2. Sınıf">
+                        <span class="lesson-name">İstatistik I</span>
+                        <div class="lesson-info">
+                            📍 Derslik 201<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. İnanç KABASAKAL</span><br>
+                            <span class="class-badge">2. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. U. Gökay ÇİÇEKLİ" data-class="İşletme Tezli">
+                        <span class="lesson-name">Üretim ve İşlemler Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 104<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. U. Gökay ÇİÇEKLİ</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="ÖĞRETMEN 1" data-class="1. Sınıf">
+                        <span class="lesson-name">Matematik-I (Tek)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 102<br>
+                            👨‍🏫 <span class="teacher-name">ÖĞRETMEN 1</span><br>
+                            <span class="class-badge">1. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Aykan CANDEMİR" data-class="Pazarlama Tezli">
+                        <span class="lesson-name">Pazarlama Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 210<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Aykan CANDEMİR</span><br>
+                            <span class="class-badge">Pazarlama Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Derya İLİC" data-class="Yönetim ve Organizasyon Doktora">
+                        <span class="lesson-name">İnsan Kaynakları Yönetiminde Yeni Yaklaşımlar</span>
+                        <div class="lesson-info">
+                            📍 Derslik 302<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Derya İLİC</span><br>
+                            <span class="class-badge">Yönetim ve Organizasyon Doktora</span>
+                        </div>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Araş. Gör. Dr. Begüm KANAT TİRYAKİ" data-class="0. Sınıf">
+                        <span class="lesson-name">Business I (Tasfiye)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 205<br>
+                            👨‍🏫 <span class="teacher-name">Araş. Gör. Dr. Begüm KANAT TİRYAKİ</span><br>
+                            <span class="class-badge">0. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Aydın KOÇAK" data-class="İşletme Tezli">
+                        <span class="lesson-name">Stok Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 110<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Aydın KOÇAK</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Elif ÜSTÜNDAĞLI ERTEN" data-class="3. Sınıf">
+                        <span class="lesson-name">Reklamcılık Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 102<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Elif ÜSTÜNDAĞLI ERTEN</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Miray BAYBARS" data-class="1. Sınıf">
+                        <span class="lesson-name">Kariyer Planlama</span>
+                        <div class="lesson-info">
+                            📍 Derslik 209<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Miray BAYBARS</span><br>
+                            <span class="class-badge">1. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Burak ÇAPRAZ" data-class="Yönetim ve Organizasyon Doktora">
+                        <span class="lesson-name">Stratejik Yönetimde Güncel Konular</span>
+                        <div class="lesson-info">
+                            📍 Derslik 210<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Burak ÇAPRAZ</span><br>
+                            <span class="class-badge">Yönetim ve Organizasyon Doktora</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Derya İLİC" data-class="3. Sınıf">
+                        <span class="lesson-name">Yönetim Geliştirme</span>
+                        <div class="lesson-info">
+                            📍 Derslik 302<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Derya İLİC</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                    </div>
+                    </td></tr><tr><td class='time-cell'>13:00-16:00</td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. G. Nazan GÜNAY" data-class="2. Sınıf">
+                        <span class="lesson-name">Marketing Management I</span>
+                        <div class="lesson-info">
+                            📍 Derslik 105<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. G. Nazan GÜNAY</span><br>
+                            <span class="class-badge">2. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Haluk SOYUER" data-class="Üretim Yönetimi ve Sayısal Yöntemler Tezli">
+                        <span class="lesson-name">Üretimde Yenilik ve Teknoloji Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 202<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Haluk SOYUER</span><br>
+                            <span class="class-badge">Üretim Yönetimi ve Sayısal Yöntemler Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Esin GÜRBÜZ" data-class="3. Sınıf">
+                        <span class="lesson-name">Borçlar Hukuku</span>
+                        <div class="lesson-info">
+                            📍 Derslik 103<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Esin GÜRBÜZ</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Hakan ERKAL" data-class="Yönetim ve Organizasyon Doktora">
+                        <span class="lesson-name">Yönetimin Felsefi Temelleri</span>
+                        <div class="lesson-info">
+                            📍 Derslik 203<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Hakan ERKAL</span><br>
+                            <span class="class-badge">Yönetim ve Organizasyon Doktora</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ" data-class="Yönetim Bilimi ve Organizasyon Tezli">
+                        <span class="lesson-name">Örgütsel Davranış</span>
+                        <div class="lesson-info">
+                            📍 Derslik 209<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ</span><br>
+                            <span class="class-badge">Yönetim Bilimi ve Organizasyon Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Ayla Özhan DEDEOĞLU" data-class="İşletme Tezli">
+                        <span class="lesson-name">Hizmet Pazarlaması</span>
+                        <div class="lesson-info">
+                            📍 Derslik 208<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Ayla Özhan DEDEOĞLU</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Murat KOCAMAZ" data-class="Üretim Yönetimi ve Sayısal Yöntemler Doktora">
+                        <span class="lesson-name">İleri Üretim Çizelgeleme</span>
+                        <div class="lesson-info">
+                            📍 Derslik 301<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Murat KOCAMAZ</span><br>
+                            <span class="class-badge">Üretim Yönetimi ve Sayısal Yöntemler Doktora</span>
+                        </div>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. Haluk SOYUER" data-class="3. Sınıf">
+                        <span class="lesson-name">Teknoloji ve Sanayi Dinamikleri</span>
+                        <div class="lesson-info">
+                            📍 Derslik 108<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Haluk SOYUER</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. G. Nazan GÜNAY" data-class="İşletme Tezli">
+                        <span class="lesson-name">Tüketici Davranışları</span>
+                        <div class="lesson-info">
+                            📍 Derslik 301<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. G. Nazan GÜNAY</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. U. Gökay ÇİÇEKLİ" data-class="Üretim Yönetimi ve Sayısal Yöntemler Tezli">
+                        <span class="lesson-name">Yönetim Bilişim Sistemleri</span>
+                        <div class="lesson-info">
+                            📍 Derslik 105<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. U. Gökay ÇİÇEKLİ</span><br>
+                            <span class="class-badge">Üretim Yönetimi ve Sayısal Yöntemler Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Ş. Sertaç ÇAKI" data-class="2. Sınıf">
+                        <span class="lesson-name">Yönetim Muhasebesi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 211<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Ş. Sertaç ÇAKI</span><br>
+                            <span class="class-badge">2. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Ayla Özhan DEDEOĞLU" data-class="Yönetim ve Organizasyon Doktora">
+                        <span class="lesson-name">Bilimsel Araştırma Yöntemleri ve Etik</span>
+                        <div class="lesson-info">
+                            📍 Derslik 208<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Ayla Özhan DEDEOĞLU</span><br>
+                            <span class="class-badge">Yönetim ve Organizasyon Doktora</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Derya İLİC" data-class="Yönetim Bilimi ve Organizasyon Tezli">
+                        <span class="lesson-name">Değişim Yönetimi ve Yönetim Danışmanlığı</span>
+                        <div class="lesson-info">
+                            📍 Derslik 302<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Derya İLİC</span><br>
+                            <span class="class-badge">Yönetim Bilimi ve Organizasyon Tezli</span>
+                        </div>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="ÖĞRETMEN 3" data-class="1. Sınıf">
+                        <span class="lesson-name">Introduction to Microeconomics</span>
+                        <div class="lesson-info">
+                            📍 Derslik 203<br>
+                            👨‍🏫 <span class="teacher-name">ÖĞRETMEN 3</span><br>
+                            <span class="class-badge">1. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Burcu ŞENTÜRK YILDIZ" data-class="İşletme Tezli">
+                        <span class="lesson-name">Örgüt Sosyolojisi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 204<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Burcu ŞENTÜRK YILDIZ</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Esin GÜRBÜZ" data-class="3. Sınıf">
+                        <span class="lesson-name">İşletme Hukuku</span>
+                        <div class="lesson-info">
+                            📍 Derslik 111<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Esin GÜRBÜZ</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ" data-class="2. Sınıf">
+                        <span class="lesson-name">Organizational Behavior (Tek)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 303<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ</span><br>
+                            <span class="class-badge">2. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Ayla Özhan DEDEOĞLU" data-class="3. Sınıf">
+                        <span class="lesson-name">Consumer Behavior (Tek)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 302<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Ayla Özhan DEDEOĞLU</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Burcu ARACIOĞLU" data-class="Üretim Yönetimi ve Sayısal Yöntemler Doktora">
+                        <span class="lesson-name">Bilimsel Araştırma Yöntemleri ve Etik</span>
+                        <div class="lesson-info">
+                            📍 Derslik 209<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Burcu ARACIOĞLU</span><br>
+                            <span class="class-badge">Üretim Yönetimi ve Sayısal Yöntemler Doktora</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Keti VENTURA" data-class="Pazarlama Tezli">
+                        <span class="lesson-name">Pazarlamada Güncel Konular</span>
+                        <div class="lesson-info">
+                            📍 Derslik 210<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Keti VENTURA</span><br>
+                            <span class="class-badge">Pazarlama Tezli</span>
+                        </div>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. G. Nazan GÜNAY" data-class="4. Sınıf">
+                        <span class="lesson-name">Vestel İşletmecilik Seminerleri I</span>
+                        <div class="lesson-info">
+                            📍 Derslik 101<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. G. Nazan GÜNAY</span><br>
+                            <span class="class-badge">4. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Aydın KOÇAK" data-class="Üretim Yönetimi Tezli">
+                        <span class="lesson-name">Stok Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 205<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Aydın KOÇAK</span><br>
+                            <span class="class-badge">Üretim Yönetimi Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU" data-class="3. Sınıf">
+                        <span class="lesson-name">Girişimcilik ve KOBİ Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 104<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="ÖĞRETMEN 2" data-class="1. Sınıf">
+                        <span class="lesson-name">Matematik-I (Çift)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 211<br>
+                            👨‍🏫 <span class="teacher-name">ÖĞRETMEN 2</span><br>
+                            <span class="class-badge">1. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ" data-class="İşletme Tezli">
+                        <span class="lesson-name">Örgütsel Davranış</span>
+                        <div class="lesson-info">
+                            📍 Derslik 210<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Ayla Özhan DEDEOĞLU" data-class="Pazarlama Tezli">
+                        <span class="lesson-name">Hizmet Pazarlaması</span>
+                        <div class="lesson-info">
+                            📍 Derslik 103<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Ayla Özhan DEDEOĞLU</span><br>
+                            <span class="class-badge">Pazarlama Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Keti VENTURA" data-class="İşletme Tezli">
+                        <span class="lesson-name">Pazarlamada Güncel Konular</span>
+                        <div class="lesson-info">
+                            📍 Derslik 302<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Keti VENTURA</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. Türker SUSMUŞ" data-class="3. Sınıf">
+                        <span class="lesson-name">Uygulamalı Finansal Piyasa İşlemleri</span>
+                        <div class="lesson-info">
+                            📍 Derslik 303<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Türker SUSMUŞ</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="ÖĞRETMEN 5" data-class="1. Sınıf">
+                        <span class="lesson-name">Atatürk İlkeleri ve İnkılap Tarihi I</span>
+                        <div class="lesson-info">
+                            📍 Derslik 208<br>
+                            👨‍🏫 <span class="teacher-name">ÖĞRETMEN 5</span><br>
+                            <span class="class-badge">1. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Hakan ERKAL" data-class="2. Sınıf">
+                        <span class="lesson-name">Organizational Behavior (Çift)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 104<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Hakan ERKAL</span><br>
+                            <span class="class-badge">2. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Aykan CANDEMİR" data-class="4. Sınıf">
+                        <span class="lesson-name">Global Marketing (Tek)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 202<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Aykan CANDEMİR</span><br>
+                            <span class="class-badge">4. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Burcu ARACIOĞLU" data-class="İşletme Tezli">
+                        <span class="lesson-name">Tedarik Zinciri Yönetimi ve Lojistik</span>
+                        <div class="lesson-info">
+                            📍 Derslik 209<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Burcu ARACIOĞLU</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Haluk SOYUER" data-class="Üretim Yönetimi ve Sayısal Yöntemler Tezli">
+                        <span class="lesson-name">Seminer</span>
+                        <div class="lesson-info">
+                            📍 Derslik 302<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Haluk SOYUER</span><br>
+                            <span class="class-badge">Üretim Yönetimi ve Sayısal Yöntemler Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Murat KOCAMAZ" data-class="İşletme Tezli">
+                        <span class="lesson-name">Üretim Çizelgeleme</span>
+                        <div class="lesson-info">
+                            📍 Derslik 105<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Murat KOCAMAZ</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                    </div>
+                    </td></tr><tr><td class='time-cell'>16:00-19:00</td><td>
+                    <div class="lesson-card" data-teacher="Araş. Gör. Dr. Özgür BABACAN" data-class="0. Sınıf">
+                        <span class="lesson-name">İşletmeye Giriş</span>
+                        <div class="lesson-info">
+                            📍 Derslik 303<br>
+                            👨‍🏫 <span class="teacher-name">Araş. Gör. Dr. Özgür BABACAN</span><br>
+                            <span class="class-badge">0. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Haydar YALÇIN" data-class="İşletme Tezli">
+                        <span class="lesson-name">Dijital Dönüşümün Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 111<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Haydar YALÇIN</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU" data-class="3. Sınıf">
+                        <span class="lesson-name">Araştırma Yöntemleri (Çift)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 201<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="ÖĞRETMEN 4" data-class="1. Sınıf">
+                        <span class="lesson-name">Türk Dili I</span>
+                        <div class="lesson-info">
+                            📍 Derslik 301<br>
+                            👨‍🏫 <span class="teacher-name">ÖĞRETMEN 4</span><br>
+                            <span class="class-badge">1. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Burcu ARACIOĞLU" data-class="2. Sınıf">
+                        <span class="lesson-name">Operations Management I</span>
+                        <div class="lesson-info">
+                            📍 Derslik 208<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Burcu ARACIOĞLU</span><br>
+                            <span class="class-badge">2. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Keti VENTURA" data-class="4. Sınıf">
+                        <span class="lesson-name">Global Marketing (Çift)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 101<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Keti VENTURA</span><br>
+                            <span class="class-badge">4. Sınıf</span>
+                        </div>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Doç. Dr. Burcu ŞENTÜRK YILDIZ" data-class="1. Sınıf">
+                        <span class="lesson-name">Sosyoloji</span>
+                        <div class="lesson-info">
+                            📍 Derslik 203<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Burcu ŞENTÜRK YILDIZ</span><br>
+                            <span class="class-badge">1. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Haydar YALÇIN" data-class="3. Sınıf">
+                        <span class="lesson-name">Enformetri</span>
+                        <div class="lesson-info">
+                            📍 Derslik 108<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Haydar YALÇIN</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Hakan ERKAL" data-class="İşletme Tezli">
+                        <span class="lesson-name">Yönetimde Güncel Yaklaşımlar</span>
+                        <div class="lesson-info">
+                            📍 Derslik 302<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Hakan ERKAL</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Miray BAYBARS" data-class="Pazarlama Tezli">
+                        <span class="lesson-name">E-Pazarlama</span>
+                        <div class="lesson-info">
+                            📍 Derslik 111<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Miray BAYBARS</span><br>
+                            <span class="class-badge">Pazarlama Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ" data-class="Yönetim ve Organizasyon Doktora">
+                        <span class="lesson-name">İleri Örgütsel Davranış</span>
+                        <div class="lesson-info">
+                            📍 Derslik 101<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ</span><br>
+                            <span class="class-badge">Yönetim ve Organizasyon Doktora</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Murat KOCAMAZ" data-class="3. Sınıf">
+                        <span class="lesson-name">Operations Research I</span>
+                        <div class="lesson-info">
+                            📍 Derslik 303<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Murat KOCAMAZ</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Türker SUSMUŞ" data-class="0. Sınıf">
+                        <span class="lesson-name">Uygulamalı Finansal Piyasa İşlemleri (Örgün)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 105<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Türker SUSMUŞ</span><br>
+                            <span class="class-badge">0. Sınıf</span>
+                        </div>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Doç. Dr. Aydın KOÇAK" data-class="3. Sınıf">
+                        <span class="lesson-name">E-İş ve Kurumsal Kaynak Planlama</span>
+                        <div class="lesson-info">
+                            📍 Derslik 110<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Aydın KOÇAK</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Sema AYDIN" data-class="1. Sınıf">
+                        <span class="lesson-name">Hukukun Temel Kavramları (Örgün + İ.Ö.)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 205<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Sema AYDIN</span><br>
+                            <span class="class-badge">1. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. U. Gökay ÇİÇEKLİ" data-class="4. Sınıf">
+                        <span class="lesson-name">System Analysis and Design</span>
+                        <div class="lesson-info">
+                            📍 Derslik 204<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. U. Gökay ÇİÇEKLİ</span><br>
+                            <span class="class-badge">4. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Miray BAYBARS" data-class="İşletme Tezli">
+                        <span class="lesson-name">E-Pazarlama</span>
+                        <div class="lesson-info">
+                            📍 Derslik 208<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Miray BAYBARS</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Dilek DEMİRHAN" data-class="3. Sınıf">
+                        <span class="lesson-name">Financial Management I</span>
+                        <div class="lesson-info">
+                            📍 Derslik 211<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Dilek DEMİRHAN</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. G. Nazan GÜNAY" data-class="Pazarlama Tezli">
+                        <span class="lesson-name">Tüketici Davranışları</span>
+                        <div class="lesson-info">
+                            📍 Derslik 102<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. G. Nazan GÜNAY</span><br>
+                            <span class="class-badge">Pazarlama Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Türker SUSMUŞ" data-class="0. Sınıf">
+                        <span class="lesson-name">Muhasebe II (Tasfiye)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 111<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Türker SUSMUŞ</span><br>
+                            <span class="class-badge">0. Sınıf</span>
+                        </div>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Araş. Gör. Dr. Özgür BABACAN" data-class="2. Sınıf">
+                        <span class="lesson-name">Muhasebe I</span>
+                        <div class="lesson-info">
+                            📍 Derslik 303<br>
+                            👨‍🏫 <span class="teacher-name">Araş. Gör. Dr. Özgür BABACAN</span><br>
+                            <span class="class-badge">2. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Elif ÜSTÜNDAĞLI ERTEN" data-class="Pazarlama Tezli">
+                        <span class="lesson-name">Bilimsel Araştırma Yöntemleri ve Etik</span>
+                        <div class="lesson-info">
+                            📍 Derslik 105<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Elif ÜSTÜNDAĞLI ERTEN</span><br>
+                            <span class="class-badge">Pazarlama Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. İnanç KABASAKAL" data-class="3. Sınıf">
+                        <span class="lesson-name">Bilgi Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 205<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. İnanç KABASAKAL</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Hakan ERKAL" data-class="Yönetim Bilimi ve Organizasyon Tezli">
+                        <span class="lesson-name">Yönetimde Güncel Yaklaşımlar</span>
+                        <div class="lesson-info">
+                            📍 Derslik 204<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Hakan ERKAL</span><br>
+                            <span class="class-badge">Yönetim Bilimi ve Organizasyon Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Aykan CANDEMİR" data-class="İşletme Tezli">
+                        <span class="lesson-name">Pazarlama Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 109<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Aykan CANDEMİR</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. İpek KAZANÇOĞLU" data-class="3. Sınıf">
+                        <span class="lesson-name">Sürdürülebilir Pazarlama</span>
+                        <div class="lesson-info">
+                            📍 Derslik 211<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. İpek KAZANÇOĞLU</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Araş. Gör. Dr. Begüm KANAT TİRYAKİ" data-class="0. Sınıf">
+                        <span class="lesson-name">Introduction to Business (Örgün + İ.Ö)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 102<br>
+                            👨‍🏫 <span class="teacher-name">Araş. Gör. Dr. Begüm KANAT TİRYAKİ</span><br>
+                            <span class="class-badge">0. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Elif ÜSTÜNDAĞLI ERTEN" data-class="3. Sınıf">
+                        <span class="lesson-name">Consumer Behavior (Çift)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 211<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Elif ÜSTÜNDAĞLI ERTEN</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Miray BAYBARS" data-class="1. Sınıf">
+                        <span class="lesson-name">Business</span>
+                        <div class="lesson-info">
+                            📍 Derslik 208<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Miray BAYBARS</span><br>
+                            <span class="class-badge">1. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Burak ÇAPRAZ" data-class="4. Sınıf">
+                        <span class="lesson-name">Human Resources Management</span>
+                        <div class="lesson-info">
+                            📍 Derslik 203<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Burak ÇAPRAZ</span><br>
+                            <span class="class-badge">4. Sınıf</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Derya İLİC" data-class="3. Sınıf">
+                        <span class="lesson-name">Management Consultancy</span>
+                        <div class="lesson-info">
+                            📍 Derslik 108<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Derya İLİC</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                    </div>
+                    </td></tr><tr><td class='time-cell'>19:00-21:00</td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. G. Nazan GÜNAY" data-class="Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz">
+                        <span class="lesson-name">Tüketici Davranışları A</span>
+                        <div class="lesson-info">
+                            📍 Derslik 104<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. G. Nazan GÜNAY</span><br>
+                            <span class="class-badge">Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Burcu ŞENTÜRK YILDIZ" data-class="İşletme İ.Ö. Tezsiz">
+                        <span class="lesson-name">Örgütler ve Yönetim</span>
+                        <div class="lesson-info">
+                            📍 Derslik 110<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Burcu ŞENTÜRK YILDIZ</span><br>
+                            <span class="class-badge">İşletme İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. İnanç KABASAKAL" data-class="Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz">
+                        <span class="lesson-name">İş Analitiğinde Sayısal Yöntemler</span>
+                        <div class="lesson-info">
+                            📍 Derslik 202<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. İnanç KABASAKAL</span><br>
+                            <span class="class-badge">Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. U. Gökay ÇİÇEKLİ" data-class="Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz">
+                        <span class="lesson-name">Akıllı Karar Modelleri</span>
+                        <div class="lesson-info">
+                            📍 Derslik 111<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. U. Gökay ÇİÇEKLİ</span><br>
+                            <span class="class-badge">Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ" data-class="İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz">
+                        <span class="lesson-name">Örgütsel Davranış</span>
+                        <div class="lesson-info">
+                            📍 Derslik 209<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ</span><br>
+                            <span class="class-badge">İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Dilek DEMİRHAN" data-class="İşletme İ.Ö. Tezsiz">
+                        <span class="lesson-name">Stratejik İşletme Finansı</span>
+                        <div class="lesson-info">
+                            📍 Derslik 109<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Dilek DEMİRHAN</span><br>
+                            <span class="class-badge">İşletme İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Murat KOCAMAZ" data-class="Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz">
+                        <span class="lesson-name">Ağ Modelleri</span>
+                        <div class="lesson-info">
+                            📍 Derslik 211<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Murat KOCAMAZ</span><br>
+                            <span class="class-badge">Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Türker SUSMUŞ" data-class="Muhasebe ve Finansman İ.Ö. Tezsiz">
+                        <span class="lesson-name">Finansal Muhasebe</span>
+                        <div class="lesson-info">
+                            📍 Derslik 301<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Türker SUSMUŞ</span><br>
+                            <span class="class-badge">Muhasebe ve Finansman İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. G. Nazan GÜNAY" data-class="Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz">
+                        <span class="lesson-name">Tüketici Davranışları B</span>
+                        <div class="lesson-info">
+                            📍 Derslik 101<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. G. Nazan GÜNAY</span><br>
+                            <span class="class-badge">Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Haluk SOYUER" data-class="Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz">
+                        <span class="lesson-name">Stratejik Üretim Yönetimi ve Üretimde Dijitalleşme</span>
+                        <div class="lesson-info">
+                            📍 Derslik 104<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Haluk SOYUER</span><br>
+                            <span class="class-badge">Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Sema AYDIN" data-class="İşletme İ.Ö. Tezsiz">
+                        <span class="lesson-name">Ticaret Hukuku</span>
+                        <div class="lesson-info">
+                            📍 Derslik 203<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Sema AYDIN</span><br>
+                            <span class="class-badge">İşletme İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. U. Gökay ÇİÇEKLİ" data-class="Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz">
+                        <span class="lesson-name">Bilimsel Araştırma Yöntemleri ve Etik</span>
+                        <div class="lesson-info">
+                            📍 Derslik 102<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. U. Gökay ÇİÇEKLİ</span><br>
+                            <span class="class-badge">Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Ş. Sertaç ÇAKI" data-class="Muhasebe ve Finansman İ.Ö. Tezsiz">
+                        <span class="lesson-name">Sermaye Piyasaları ve Menkul Kıymetler Analizi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 110<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Ş. Sertaç ÇAKI</span><br>
+                            <span class="class-badge">Muhasebe ve Finansman İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Burak ÇAPRAZ" data-class="İşletme İ.Ö. Tezsiz">
+                        <span class="lesson-name">Örgütler ve Yönetim</span>
+                        <div class="lesson-info">
+                            📍 Derslik 209<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Burak ÇAPRAZ</span><br>
+                            <span class="class-badge">İşletme İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Burcu ARACIOĞLU" data-class="Uzaktan Öğretim İşletme Tezsiz">
+                        <span class="lesson-name">Tedarik Zinciri Yönetimi ve Lojistik</span>
+                        <div class="lesson-info">
+                            📍 Derslik 204<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Burcu ARACIOĞLU</span><br>
+                            <span class="class-badge">Uzaktan Öğretim İşletme Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Derya İLİC" data-class="İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz">
+                        <span class="lesson-name">Örgütler ve Yönetim</span>
+                        <div class="lesson-info">
+                            📍 Derslik 202<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Derya İLİC</span><br>
+                            <span class="class-badge">İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Araş. Gör. Dr. Özgür BABACAN" data-class="Muhasebe ve Finansman İ.Ö. Tezsiz">
+                        <span class="lesson-name">Uluslararası Finansman</span>
+                        <div class="lesson-info">
+                            📍 Derslik 101<br>
+                            👨‍🏫 <span class="teacher-name">Araş. Gör. Dr. Özgür BABACAN</span><br>
+                            <span class="class-badge">Muhasebe ve Finansman İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Burcu ŞENTÜRK YILDIZ" data-class="İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz">
+                        <span class="lesson-name">İnsan Kaynakları Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 204<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Burcu ŞENTÜRK YILDIZ</span><br>
+                            <span class="class-badge">İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU" data-class="İşletme İ.Ö. Tezsiz">
+                        <span class="lesson-name">Pazarlama Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 104<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU</span><br>
+                            <span class="class-badge">İşletme İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Esin GÜRBÜZ" data-class="İşletme İ.Ö. Tezsiz">
+                        <span class="lesson-name">Ticaret Hukuku</span>
+                        <div class="lesson-info">
+                            📍 Derslik 105<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Esin GÜRBÜZ</span><br>
+                            <span class="class-badge">İşletme İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Aykan CANDEMİR" data-class="Uzaktan Öğretim İşletme Tezsiz">
+                        <span class="lesson-name">Hizmet Pazarlaması</span>
+                        <div class="lesson-info">
+                            📍 Derslik 108<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Aykan CANDEMİR</span><br>
+                            <span class="class-badge">Uzaktan Öğretim İşletme Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Burak ÇAPRAZ" data-class="İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz">
+                        <span class="lesson-name">Bilimsel Araştırma Yöntemleri ve Etik</span>
+                        <div class="lesson-info">
+                            📍 Derslik 111<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Burak ÇAPRAZ</span><br>
+                            <span class="class-badge">İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Burcu ARACIOĞLU" data-class="Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz">
+                        <span class="lesson-name">Lojistik ve Tedarik Zincirinde Güncel Konular</span>
+                        <div class="lesson-info">
+                            📍 Derslik 205<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Burcu ARACIOĞLU</span><br>
+                            <span class="class-badge">Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. İpek KAZANÇOĞLU" data-class="Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz">
+                        <span class="lesson-name">Perakendecilik</span>
+                        <div class="lesson-info">
+                            📍 Derslik 301<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. İpek KAZANÇOĞLU</span><br>
+                            <span class="class-badge">Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Keti VENTURA" data-class="Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz">
+                        <span class="lesson-name">Endüstriyel Pazarlama</span>
+                        <div class="lesson-info">
+                            📍 Derslik 302<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Keti VENTURA</span><br>
+                            <span class="class-badge">Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Murat KOCAMAZ" data-class="Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz">
+                        <span class="lesson-name">Veri Odaklı Üretim Planlama Stratejileri</span>
+                        <div class="lesson-info">
+                            📍 Derslik 103<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Murat KOCAMAZ</span><br>
+                            <span class="class-badge">Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. Haluk SOYUER" data-class="Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz">
+                        <span class="lesson-name">Tedarik Zinciri ve Lojistik İçin Bilgi Sistemleri</span>
+                        <div class="lesson-info">
+                            📍 Derslik 203<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Haluk SOYUER</span><br>
+                            <span class="class-badge">Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Aydın KOÇAK" data-class="Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz">
+                        <span class="lesson-name">Proje Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 108<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Aydın KOÇAK</span><br>
+                            <span class="class-badge">Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. U. Gökay ÇİÇEKLİ" data-class="İşletme İ.Ö. Tezsiz">
+                        <span class="lesson-name">İşlemler Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 111<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. U. Gökay ÇİÇEKLİ</span><br>
+                            <span class="class-badge">İşletme İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Ş. Sertaç ÇAKI" data-class="Muhasebe ve Finansman İ.Ö. Tezsiz">
+                        <span class="lesson-name">Vadeli İşlem Piyasaları</span>
+                        <div class="lesson-info">
+                            📍 Derslik 208<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Ş. Sertaç ÇAKI</span><br>
+                            <span class="class-badge">Muhasebe ve Finansman İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ" data-class="İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz">
+                        <span class="lesson-name">Kurumsal Koçluk ve Mentorluk</span>
+                        <div class="lesson-info">
+                            📍 Derslik 209<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ</span><br>
+                            <span class="class-badge">İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Ayla Özhan DEDEOĞLU" data-class="Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz">
+                        <span class="lesson-name">Stratejik Pazarlama Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 302<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Ayla Özhan DEDEOĞLU</span><br>
+                            <span class="class-badge">Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Derya İLİC" data-class="Uzaktan Öğretim İşletme Tezsiz">
+                        <span class="lesson-name">Örgütler ve Yönetim</span>
+                        <div class="lesson-info">
+                            📍 Derslik 105<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Derya İLİC</span><br>
+                            <span class="class-badge">Uzaktan Öğretim İşletme Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Dilek DEMİRHAN" data-class="Muhasebe ve Finansman İ.Ö. Tezsiz">
+                        <span class="lesson-name">Stratejik Finans Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 301<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Dilek DEMİRHAN</span><br>
+                            <span class="class-badge">Muhasebe ve Finansman İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Keti VENTURA" data-class="Uzaktan Öğretim İşletme Tezsiz">
+                        <span class="lesson-name">Pazarlama Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 303<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Keti VENTURA</span><br>
+                            <span class="class-badge">Uzaktan Öğretim İşletme Tezsiz</span>
+                        </div>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. Haluk SOYUER" data-class="Uzaktan Öğretim İşletme Tezsiz">
+                        <span class="lesson-name">İşlemler Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 104<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Haluk SOYUER</span><br>
+                            <span class="class-badge">Uzaktan Öğretim İşletme Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Aydın KOÇAK" data-class="Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz">
+                        <span class="lesson-name">Malzeme ve Stok Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 105<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Aydın KOÇAK</span><br>
+                            <span class="class-badge">Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Haydar YALÇIN" data-class="Muhasebe ve Finansman İ.Ö. Tezsiz">
+                        <span class="lesson-name">Bilimsel Araştırma Yöntemleri ve Etik</span>
+                        <div class="lesson-info">
+                            📍 Derslik 101<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Haydar YALÇIN</span><br>
+                            <span class="class-badge">Muhasebe ve Finansman İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Hakan ERKAL" data-class="İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz">
+                        <span class="lesson-name">Yönetim Atölyesi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 102<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Hakan ERKAL</span><br>
+                            <span class="class-badge">İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Aykan CANDEMİR" data-class="Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz">
+                        <span class="lesson-name">Hizmet Pazarlaması</span>
+                        <div class="lesson-info">
+                            📍 Derslik 203<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Aykan CANDEMİR</span><br>
+                            <span class="class-badge">Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Burcu ARACIOĞLU" data-class="Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz">
+                        <span class="lesson-name">Stratejik Yatırım Kararları ve Planlama</span>
+                        <div class="lesson-info">
+                            📍 Derslik 109<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Burcu ARACIOĞLU</span><br>
+                            <span class="class-badge">Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Murat KOCAMAZ" data-class="İşletme İ.Ö. Tezsiz">
+                        <span class="lesson-name">İşlemler Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 204<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Murat KOCAMAZ</span><br>
+                            <span class="class-badge">İşletme İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Türker SUSMUŞ" data-class="İşletme İ.Ö. Tezsiz">
+                        <span class="lesson-name">Stratejik İşletme Finansı</span>
+                        <div class="lesson-info">
+                            📍 Derslik 209<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Türker SUSMUŞ</span><br>
+                            <span class="class-badge">İşletme İ.Ö. Tezsiz</span>
+                        </div>
+                    </div>
+                    </td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <script>
+            function filterSchedule() {
+                const teacherVal = document.getElementById("teacherSelect").value;
+                const classVal = document.getElementById("classSelect").value;
+                const cards = document.querySelectorAll(".lesson-card");
+
+                cards.forEach(card => {
+                    const tMatch = (teacherVal === "all" || card.getAttribute("data-teacher") === teacherVal);
+                    const cMatch = (classVal === "all" || card.getAttribute("data-class") === classVal);
+                    card.style.display = (tMatch && cMatch) ? "block" : "none";
+                });
+            }
+        </script>
+        </body>
+        </html>
+        
