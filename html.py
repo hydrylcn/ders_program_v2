@@ -181,7 +181,7 @@ def rapor_olustur(file_path='isletme_ders_programi.xlsx'):
                 const tv = document.getElementById("teacherSelect").value;
                 const cv = document.getElementById("classSelect").value;
                 if (tv === "all" && cv === "all") {
-                    alert("⚠️ Lütfen önce filtreleme yapın.");
+                    alert("⚠️ Lütfen önce bir Öğretim Elemanı veya Sınıf seçerek filtreleme yapın.");
                     return;
                 }
                 const visible = Array.from(document.querySelectorAll(".lesson-card")).filter(c => c.style.display !== "none");
