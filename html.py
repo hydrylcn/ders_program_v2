@@ -3,7 +3,9 @@ import re
 import os
 import sys
 
-def rapor_olustur(file_path='isletme_ders_programi.xlsx'):
+
+def rapor_olustur(file_path='isletme_ders_programi.xlsx', output_name="ders_programi_takvim.html",
+                  baslik="📅 İşletme Bölümü Haftalık Ders Programı", ana_renk="#1a73e8"):
     try:
         # --- DOSYA YOLU AYARLARI ---
         if getattr(sys, 'frozen', False):
@@ -31,7 +33,7 @@ def rapor_olustur(file_path='isletme_ders_programi.xlsx'):
                 continue
 
             for i, saat in enumerate(time_slots):
-                hucre = row.iloc[i+1]
+                hucre = row.iloc[i + 1]
                 if pd.isna(hucre) or str(hucre).strip() == "":
                     continue
 
@@ -61,14 +63,20 @@ def rapor_olustur(file_path='isletme_ders_programi.xlsx'):
                             })
 
         if not lessons_list:
-            print("⚠️ Uyarı: İşlenecek veri bulunamadı.")
+            print(f"⚠️ Uyarı: {file_path} için işlenecek veri bulunamadı.")
             return
 
         final_df = pd.DataFrame(lessons_list)
         all_teachers = sorted(final_df['Hoca'].unique())
         all_classes = sorted(final_df['Sınıf'].unique())
         existing_days = [d for d in gunler_sirali if d in final_df['Gün'].unique()]
-        existing_hours = sorted(final_df['Saat'].unique())
+
+        # SAAT SIRALAMA DÜZENLEMESİ: Sınav takvimindeki bölünmüş saatleri kronolojik sıralar
+        existing_hours = sorted(final_df['Saat'].unique(), key=lambda x: x.split('-')[0])
+
+        # Dinamik Renk Ayarları
+        badge_bg = "#ffebee" if ana_renk == "#d32f2f" else "#e8f0fe"
+        badge_text = "#c62828" if ana_renk == "#d32f2f" else "#1967d2"
 
         # 3. HTML Şablonu
         html_content = f"""
@@ -76,11 +84,11 @@ def rapor_olustur(file_path='isletme_ders_programi.xlsx'):
         <html lang="tr">
         <head>
             <meta charset="UTF-8">
-            <title>Haftalık Ders Programı - Takvim</title>
+            <title>{baslik}</title>
             <style>
                 body {{ font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; }}
                 .container {{ max-width: 1400px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }}
-                h1 {{ text-align: center; color: #1a73e8; margin-bottom: 20px; }}
+                h1 {{ text-align: center; color: {ana_renk}; margin-bottom: 20px; }}
                 .filters {{ display: flex; gap: 15px; justify-content: center; background: #fff; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #e0e0e0; position: sticky; top: 10px; z-index: 1000; }}
                 .filter-group {{ display: flex; flex-direction: column; }}
                 label {{ font-weight: 600; margin-bottom: 5px; font-size: 13px; color: #666; }}
@@ -88,19 +96,19 @@ def rapor_olustur(file_path='isletme_ders_programi.xlsx'):
                 .btn-export {{ background-color: #2e7d32; color: white; border: none; padding: 9px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 13px; margin-top: auto; }}
                 .btn-export:hover {{ background-color: #1b5e20; }}
                 table {{ width: 100%; border-collapse: collapse; table-layout: fixed; }}
-                th {{ background-color: #1a73e8; color: white; padding: 12px; border: 1px solid #1565c0; font-size: 14px; }}
+                th {{ background-color: {ana_renk}; color: white; padding: 12px; border: 1px solid #ddd; font-size: 14px; }}
                 td {{ border: 1px solid #e0e0e0; vertical-align: top; padding: 5px; background: #fafafa; height: 110px; }}
                 .time-cell {{ background: #f8f9fa; font-weight: bold; text-align: center; width: 80px; color: #333; vertical-align: middle; height: auto; font-size: 13px; }}
-                .lesson-card {{ background: #ffffff; border-left: 4px solid #1a73e8; margin-bottom: 8px; padding: 8px; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); font-size: 12px; }}
-                .lesson-name {{ font-weight: bold; color: #1a73e8; display: block; margin-bottom: 4px; border-bottom: 1px solid #eee; padding-bottom: 2px; }}
+                .lesson-card {{ background: #ffffff; border-left: 4px solid {ana_renk}; margin-bottom: 8px; padding: 8px; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); font-size: 12px; }}
+                .lesson-name {{ font-weight: bold; color: {ana_renk}; display: block; margin-bottom: 4px; border-bottom: 1px solid #eee; padding-bottom: 2px; }}
                 .teacher-name {{ color: #2e7d32; font-weight: 600; font-style: italic; }}
-                .class-badge {{ display: inline-block; background: #e8f0fe; color: #1967d2; padding: 2px 6px; border-radius: 10px; font-size: 10px; margin-top: 4px; font-weight: bold; }}
+                .class-badge {{ display: inline-block; background: {badge_bg}; color: {badge_text}; padding: 2px 6px; border-radius: 10px; font-size: 10px; margin-top: 4px; font-weight: bold; }}
                 .btn-single-add {{ margin-top: 6px; display: inline-block; background: #4285F4; color: white; padding: 3px 6px; border-radius: 3px; font-size: 9px; border: none; cursor: pointer; }}
             </style>
         </head>
         <body>
         <div class="container">
-            <h1>📅 İşletme Bölümü Haftalık Ders Programı</h1>
+            <h1>{baslik}</h1>
             <div class="filters">
                 <div class="filter-group">
                     <label>Öğretim Elemanı:</label>
@@ -215,14 +223,28 @@ def rapor_olustur(file_path='isletme_ders_programi.xlsx'):
         </html>
         """
 
-        cikti_adi = os.path.join(base_dir, "ders_programi_takvim.html")
-        with open(cikti_adi, "w", encoding="utf-8") as f:
+        with open(os.path.join(base_dir, output_name), "w", encoding="utf-8") as f:
             f.write(html_content)
 
-        print(f"✅ Takvim formatlı HTML başarıyla oluşturuldu: {cikti_adi}")
+        print(f"✅ Takvim formatlı HTML başarıyla oluşturuldu: {output_name}")
 
     except Exception as e:
         print(f"❌ Hata: {e}")
 
+
 if __name__ == "__main__":
-    rapor_olustur()
+    # Ders Programı Raporu (Mavi)
+    rapor_olustur(
+        file_path='isletme_ders_programi.xlsx',
+        output_name="ders_programi_takvim.html",
+        baslik="📅 İşletme Bölümü Haftalık Ders Programı",
+        ana_renk="#1a73e8"
+    )
+
+    # Sınav Takvimi Raporu (Kırmızı)
+    rapor_olustur(
+        file_path='isletme_sinav_takvimi.xlsx',
+        output_name="sinav_takvimi_takvim.html",
+        baslik="📝 İşletme Bölümü Sınav Takvimi",
+        ana_renk="#d32f2f"
+    )

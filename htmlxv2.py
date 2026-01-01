@@ -3,7 +3,9 @@ import re
 import os
 import sys
 
-def rapor_olustur_v2(file_path='isletme_ders_programi.xlsx'):
+
+def rapor_olustur_v2(file_path='isletme_ders_programi.xlsx', output_name="ders_programi_tablo.html",
+                     baslik="📅 İktisadi İdari Bilimler Ders Programı", ana_renk="#1a73e8"):
     """ main.py üzerinden çağrılacak olan dinamik tablo fonksiyonu """
 
     try:
@@ -17,7 +19,7 @@ def rapor_olustur_v2(file_path='isletme_ders_programi.xlsx'):
         # -----------------------------
 
         if not os.path.exists(excel_yolu):
-            print(f"❌ Hata: {excel_yolu} bulunamadı. Dinamik tablo oluşturulamıyor.")
+            print(f"❌ Hata: {excel_yolu} bulunamadı.")
             return
 
         # 1. Excel dosyasını oku
@@ -69,7 +71,7 @@ def rapor_olustur_v2(file_path='isletme_ders_programi.xlsx'):
                             })
 
         if not lessons_list:
-            print("⚠️ Uyarı: İşlenecek ders verisi bulunamadı.")
+            print(f"⚠️ Uyarı: {file_path} için işlenecek veri bulunamadı.")
             return
 
         final_df = pd.DataFrame(lessons_list)
@@ -79,32 +81,37 @@ def rapor_olustur_v2(file_path='isletme_ders_programi.xlsx'):
         all_days = ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma", "Cumartesi", "Pazar"]
         existing_days = [d for d in all_days if d in final_df['Gün'].unique()]
 
-        # 3. HTML ve JavaScript İçeriği (Şablonun aynı kalıyor)
+        # Dinamik Renk ve Stil Ayarları
+        badge_bg = "#ffebee" if ana_renk == "#d32f2f" else "#e3f2fd"
+        badge_text = "#c62828" if ana_renk == "#d32f2f" else "#1565c0"
+        hover_bg = "#fdf1f1" if ana_renk == "#d32f2f" else "#f1f7fd"
+
+        # 3. HTML ve JavaScript İçeriği
         html_template = f"""
         <!DOCTYPE html>
         <html lang="tr">
         <head>
             <meta charset="UTF-8">
-            <title>Dinamik Ders Programı</title>
+            <title>{baslik}</title>
             <style>
                 body {{ font-family: 'Segoe UI', sans-serif; background-color: #f4f7f6; margin: 0; padding: 20px; }}
                 .container {{ max-width: 1200px; margin: auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 20px rgba(0,0,0,0.08); }}
-                h1 {{ text-align: center; color: #1a73e8; margin-bottom: 30px; }}
+                h1 {{ text-align: center; color: {ana_renk}; margin-bottom: 30px; }}
                 .filters {{ display: flex; gap: 15px; justify-content: center; background: #f8f9fa; padding: 20px; border-radius: 10px; margin-bottom: 30px; flex-wrap: wrap; border: 1px solid #eee; }}
                 .filter-group {{ display: flex; flex-direction: column; }}
                 label {{ font-weight: bold; margin-bottom: 8px; color: #555; font-size: 14px; }}
                 select {{ padding: 10px; width: 250px; border-radius: 6px; border: 1px solid #ccc; font-size: 15px; background: white; cursor: pointer; outline: none; }}
                 table {{ width: 100%; border-collapse: collapse; }}
-                th {{ background-color: #1a73e8; color: white; padding: 15px; text-align: left; position: sticky; top: 0; }}
+                th {{ background-color: {ana_renk}; color: white; padding: 15px; text-align: left; position: sticky; top: 0; }}
                 td {{ padding: 12px; border-bottom: 1px solid #eee; font-size: 14px; }}
-                tr:hover {{ background-color: #f1f7fd; }}
-                .badge-sinif {{ background: #e3f2fd; color: #1565c0; padding: 4px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; }}
+                tr:hover {{ background-color: {hover_bg}; }}
+                .badge-sinif {{ background: {badge_bg}; color: {badge_text}; padding: 4px 10px; border-radius: 15px; font-size: 12px; font-weight: bold; }}
                 .hoca-adi {{ color: #2e7d32; font-weight: bold; }}
             </style>
         </head>
         <body>
         <div class="container">
-            <h1>📅 İktisadi İdari Bilimler Ders Programı</h1>
+            <h1>{baslik}</h1>
             <div class="filters">
                 <div class="filter-group"><label>Gün Seçin:</label><select id="daySelect" onchange="filterTable()"><option value="all">Tüm Günler</option>{''.join([f'<option value="{d}">{d}</option>' for d in existing_days])}</select></div>
                 <div class="filter-group"><label>Öğretim Elemanı Seçin:</label><select id="teacherSelect" onchange="filterTable()"><option value="all">Tüm Hocalar</option>{''.join([f'<option value="{h}">{h}</option>' for h in all_teachers])}</select></div>
@@ -114,6 +121,10 @@ def rapor_olustur_v2(file_path='isletme_ders_programi.xlsx'):
                 <thead><tr><th>Gün</th><th>Saat</th><th>Derslik</th><th>Ders Adı</th><th>Sınıf / Grup</th><th>Öğretim Elemanı</th></tr></thead>
                 <tbody>
         """
+
+        # Saatlere göre kronolojik sıralama
+        final_df['sort_time'] = final_df['Saat'].apply(lambda x: x.split('-')[0])
+        final_df = final_df.sort_values(by=['Gün', 'sort_time'])
 
         for _, row in final_df.iterrows():
             html_template += f"""
@@ -140,15 +151,29 @@ def rapor_olustur_v2(file_path='isletme_ders_programi.xlsx'):
         </body></html>
         """
 
-        # 4. HTML dosyasını EXE yanına kaydet
-        cikti_adi = os.path.join(base_dir, "ders_programi_tablo.html")
-        with open(cikti_adi, "w", encoding="utf-8") as f:
+        cikti_yolu = os.path.join(base_dir, output_name)
+        with open(cikti_yolu, "w", encoding="utf-8") as f:
             f.write(html_template)
 
-        print(f"✅ Filtreli HTML başarıyla oluşturuldu: {cikti_adi}")
+        print(f"✅ HTML başarıyla oluşturuldu: {cikti_yolu}")
 
     except Exception as e:
-        print(f"❌ htmlxv2.py hatası: {e}")
+        print(f"❌ Hata: {e}")
+
 
 if __name__ == "__main__":
-    rapor_olustur_v2()
+    # 1. Ders Programı Raporu (Mavi)
+    rapor_olustur_v2(
+        file_path='isletme_ders_programi.xlsx',
+        output_name="ders_programi_tablo.html",
+        baslik="📅 İktisadi İdari Bilimler Ders Programı",
+        ana_renk="#1a73e8"
+    )
+
+    # 2. Sınav Takvimi Raporu (Kırmızı)
+    rapor_olustur_v2(
+        file_path='isletme_sinav_takvimi.xlsx',
+        output_name="sinav_takvimi_tablo.html",
+        baslik="✍️ İktisadi İdari Bilimler Sınav Takvimi",
+        ana_renk="#d32f2f"
+    )

@@ -1,0 +1,1520 @@
+
+        <!DOCTYPE html>
+        <html lang="tr">
+        <head>
+            <meta charset="UTF-8">
+            <title>✍️ Dönem Sonu Sınav Takvimi</title>
+            <style>
+                body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f0f2f5; margin: 0; padding: 20px; }
+                .container { max-width: 1400px; margin: auto; background: white; padding: 20px; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,0.1); }
+                h1 { text-align: center; color: #d32f2f; margin-bottom: 20px; }
+                .filters { display: flex; gap: 15px; justify-content: center; background: #fff; padding: 20px; border-radius: 10px; margin-bottom: 20px; border: 1px solid #e0e0e0; position: sticky; top: 10px; z-index: 1000; }
+                .filter-group { display: flex; flex-direction: column; }
+                label { font-weight: 600; margin-bottom: 5px; font-size: 13px; color: #666; }
+                select { padding: 8px 12px; border-radius: 5px; border: 1px solid #ddd; min-width: 200px; }
+                .btn-export { background-color: #2e7d32; color: white; border: none; padding: 9px 15px; border-radius: 5px; cursor: pointer; font-weight: bold; font-size: 13px; margin-top: auto; }
+                .btn-export:hover { background-color: #1b5e20; }
+                table { width: 100%; border-collapse: collapse; table-layout: fixed; }
+                th { background-color: #d32f2f; color: white; padding: 12px; border: 1px solid #ddd; font-size: 14px; }
+                td { border: 1px solid #e0e0e0; vertical-align: top; padding: 5px; background: #fafafa; height: 110px; }
+                .time-cell { background: #f8f9fa; font-weight: bold; text-align: center; width: 80px; color: #333; vertical-align: middle; height: auto; font-size: 13px; }
+                .lesson-card { background: #ffffff; border-left: 4px solid #d32f2f; margin-bottom: 8px; padding: 8px; border-radius: 4px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); font-size: 12px; }
+                .lesson-name { font-weight: bold; color: #d32f2f; display: block; margin-bottom: 4px; border-bottom: 1px solid #eee; padding-bottom: 2px; }
+                .teacher-name { color: #2e7d32; font-weight: 600; font-style: italic; }
+                .class-badge { display: inline-block; background: #ffebee; color: #c62828; padding: 2px 6px; border-radius: 10px; font-size: 10px; margin-top: 4px; font-weight: bold; }
+                .btn-single-add { margin-top: 6px; display: inline-block; background: #4285F4; color: white; padding: 3px 6px; border-radius: 3px; font-size: 9px; border: none; cursor: pointer; }
+            </style>
+        </head>
+        <body>
+        <div class="container">
+            <h1>✍️ Dönem Sonu Sınav Takvimi</h1>
+            <div class="filters">
+                <div class="filter-group">
+                    <label>Öğretim Elemanı:</label>
+                    <select id="teacherSelect" onchange="filterSchedule()">
+                        <option value="all">Tüm Hocalar</option>
+                        <option value="Araş. Gör. Dr. Begüm KANAT TİRYAKİ">Araş. Gör. Dr. Begüm KANAT TİRYAKİ</option><option value="Araş. Gör. Dr. Özgür BABACAN">Araş. Gör. Dr. Özgür BABACAN</option><option value="Doç. Dr. Aydın KOÇAK">Doç. Dr. Aydın KOÇAK</option><option value="Doç. Dr. Burcu ŞENTÜRK YILDIZ">Doç. Dr. Burcu ŞENTÜRK YILDIZ</option><option value="Doç. Dr. Elif ÜSTÜNDAĞLI ERTEN">Doç. Dr. Elif ÜSTÜNDAĞLI ERTEN</option><option value="Doç. Dr. Haydar YALÇIN">Doç. Dr. Haydar YALÇIN</option><option value="Doç. Dr. Sema AYDIN">Doç. Dr. Sema AYDIN</option><option value="Doç. Dr. U. Gökay ÇİÇEKLİ">Doç. Dr. U. Gökay ÇİÇEKLİ</option><option value="Doç. Dr. İnanç KABASAKAL">Doç. Dr. İnanç KABASAKAL</option><option value="Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU">Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU</option><option value="Dr. Öğr. Üyesi Esin GÜRBÜZ">Dr. Öğr. Üyesi Esin GÜRBÜZ</option><option value="Dr. Öğr. Üyesi Hakan ERKAL">Dr. Öğr. Üyesi Hakan ERKAL</option><option value="Dr. Öğr. Üyesi Miray BAYBARS">Dr. Öğr. Üyesi Miray BAYBARS</option><option value="Dr. Öğr. Üyesi Ş. Sertaç ÇAKI">Dr. Öğr. Üyesi Ş. Sertaç ÇAKI</option><option value="Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ">Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ</option><option value="Prof. Dr. Aykan CANDEMİR">Prof. Dr. Aykan CANDEMİR</option><option value="Prof. Dr. Ayla Özhan DEDEOĞLU">Prof. Dr. Ayla Özhan DEDEOĞLU</option><option value="Prof. Dr. Burak ÇAPRAZ">Prof. Dr. Burak ÇAPRAZ</option><option value="Prof. Dr. Burcu ARACIOĞLU">Prof. Dr. Burcu ARACIOĞLU</option><option value="Prof. Dr. Derya İLİC">Prof. Dr. Derya İLİC</option><option value="Prof. Dr. Dilek DEMİRHAN">Prof. Dr. Dilek DEMİRHAN</option><option value="Prof. Dr. G. Nazan GÜNAY">Prof. Dr. G. Nazan GÜNAY</option><option value="Prof. Dr. Haluk SOYUER">Prof. Dr. Haluk SOYUER</option><option value="Prof. Dr. Keti VENTURA">Prof. Dr. Keti VENTURA</option><option value="Prof. Dr. Murat KOCAMAZ">Prof. Dr. Murat KOCAMAZ</option><option value="Prof. Dr. Türker SUSMUŞ">Prof. Dr. Türker SUSMUŞ</option><option value="Prof. Dr. İpek KAZANÇOĞLU">Prof. Dr. İpek KAZANÇOĞLU</option><option value="ÖĞRETMEN 1">ÖĞRETMEN 1</option><option value="ÖĞRETMEN 2">ÖĞRETMEN 2</option><option value="ÖĞRETMEN 3">ÖĞRETMEN 3</option><option value="ÖĞRETMEN 4">ÖĞRETMEN 4</option><option value="ÖĞRETMEN 5">ÖĞRETMEN 5</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>Sınıf / Grup:</label>
+                    <select id="classSelect" onchange="filterSchedule()">
+                        <option value="all">Tüm Sınıflar</option>
+                        <option value="0. Sınıf">0. Sınıf</option><option value="1. Sınıf">1. Sınıf</option><option value="2. Sınıf">2. Sınıf</option><option value="3. Sınıf">3. Sınıf</option><option value="4. Sınıf">4. Sınıf</option><option value="Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz">Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz</option><option value="Muhasebe ve Finansman İ.Ö. Tezsiz">Muhasebe ve Finansman İ.Ö. Tezsiz</option><option value="Pazarlama Tezli">Pazarlama Tezli</option><option value="Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz">Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz</option><option value="Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz">Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz</option><option value="Uzaktan Öğretim İşletme Tezsiz">Uzaktan Öğretim İşletme Tezsiz</option><option value="Yönetim Bilimi ve Organizasyon Tezli">Yönetim Bilimi ve Organizasyon Tezli</option><option value="Yönetim ve Organizasyon Doktora">Yönetim ve Organizasyon Doktora</option><option value="Üretim Yönetimi Tezli">Üretim Yönetimi Tezli</option><option value="Üretim Yönetimi ve Sayısal Yöntemler Doktora">Üretim Yönetimi ve Sayısal Yöntemler Doktora</option><option value="Üretim Yönetimi ve Sayısal Yöntemler Tezli">Üretim Yönetimi ve Sayısal Yöntemler Tezli</option><option value="İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz">İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz</option><option value="İşletme Doktora">İşletme Doktora</option><option value="İşletme Tezli">İşletme Tezli</option><option value="İşletme İ.Ö. Tezsiz">İşletme İ.Ö. Tezsiz</option>
+                    </select>
+                </div>
+                <div class="filter-group">
+                    <label>&nbsp;</label>
+                    <button class="btn-export" onclick="downloadICS()">📥 Seçili Programı İndir (.ics)</button>
+                </div>
+            </div>
+
+            <table id="scheduleTable">
+                <thead><tr><th style="width: 80px;">Saat</th><th>Pazartesi</th><th>Salı</th><th>Çarşamba</th><th>Perşembe</th><th>Cuma</th></tr></thead>
+                <tbody>
+        <tr><td class='time-cell'>09:00-10:30</td><td>
+                    <div class="lesson-card" data-teacher="Araş. Gör. Dr. Özgür BABACAN" data-class="0. Sınıf" data-day="Pazartesi" data-hour="09:00-10:30" data-room="Derslik 302 + Derslik 203">
+                        <span class="lesson-name">İşletmeye Giriş</span>
+                        <div class="lesson-info">
+                            📍 Derslik 302 + Derslik 203<br>
+                            👨‍🏫 <span class="teacher-name">Araş. Gör. Dr. Özgür BABACAN</span><br>
+                            <span class="class-badge">0. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'İşletmeye Giriş', teacher:'Araş. Gör. Dr. Özgür BABACAN', room:'Derslik 302 + Derslik 203', day:'Pazartesi', hour:'09:00-10:30', classInfo:'0. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Burcu ŞENTÜRK YILDIZ" data-class="İşletme Tezli" data-day="Pazartesi" data-hour="09:00-10:30" data-room="Derslik 301">
+                        <span class="lesson-name">Örgüt Sosyolojisi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 301<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Burcu ŞENTÜRK YILDIZ</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Örgüt Sosyolojisi', teacher:'Doç. Dr. Burcu ŞENTÜRK YILDIZ', room:'Derslik 301', day:'Pazartesi', hour:'09:00-10:30', classInfo:'İşletme Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU" data-class="3. Sınıf" data-day="Pazartesi" data-hour="09:00-10:30" data-room="Derslik 204">
+                        <span class="lesson-name">Araştırma Yöntemleri (Çift)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 204<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Araştırma Yöntemleri (Çift)', teacher:'Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU', room:'Derslik 204', day:'Pazartesi', hour:'09:00-10:30', classInfo:'3. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="ÖĞRETMEN 4" data-class="1. Sınıf" data-day="Pazartesi" data-hour="09:00-10:30" data-room="Derslik 101">
+                        <span class="lesson-name">Türk Dili I</span>
+                        <div class="lesson-info">
+                            📍 Derslik 101<br>
+                            👨‍🏫 <span class="teacher-name">ÖĞRETMEN 4</span><br>
+                            <span class="class-badge">1. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Türk Dili I', teacher:'ÖĞRETMEN 4', room:'Derslik 101', day:'Pazartesi', hour:'09:00-10:30', classInfo:'1. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. Haluk SOYUER" data-class="Üretim Yönetimi ve Sayısal Yöntemler Doktora" data-day="Salı" data-hour="09:00-10:30" data-room="Derslik 103">
+                        <span class="lesson-name">Üretim İşlemler Stratejisi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 103<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Haluk SOYUER</span><br>
+                            <span class="class-badge">Üretim Yönetimi ve Sayısal Yöntemler Doktora</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Üretim İşlemler Stratejisi', teacher:'Prof. Dr. Haluk SOYUER', room:'Derslik 103', day:'Salı', hour:'09:00-10:30', classInfo:'Üretim Yönetimi ve Sayısal Yöntemler Doktora'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Araş. Gör. Dr. Begüm KANAT TİRYAKİ" data-class="0. Sınıf" data-day="Salı" data-hour="09:00-10:30" data-room="Derslik 204">
+                        <span class="lesson-name">Introduction to Business (Örgün + İ.Ö)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 204<br>
+                            👨‍🏫 <span class="teacher-name">Araş. Gör. Dr. Begüm KANAT TİRYAKİ</span><br>
+                            <span class="class-badge">0. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Introduction to Business (Örgün + İ.Ö)', teacher:'Araş. Gör. Dr. Begüm KANAT TİRYAKİ', room:'Derslik 204', day:'Salı', hour:'09:00-10:30', classInfo:'0. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Haydar YALÇIN" data-class="İşletme Tezli" data-day="Salı" data-hour="09:00-10:30" data-room="Derslik 211">
+                        <span class="lesson-name">Dijital Dönüşümün Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 211<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Haydar YALÇIN</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Dijital Dönüşümün Yönetimi', teacher:'Doç. Dr. Haydar YALÇIN', room:'Derslik 211', day:'Salı', hour:'09:00-10:30', classInfo:'İşletme Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. G. Nazan GÜNAY" data-class="İşletme Doktora" data-day="Çarşamba" data-hour="09:00-10:30" data-room="Derslik 110">
+                        <span class="lesson-name">Pazarlama Kuramı</span>
+                        <div class="lesson-info">
+                            📍 Derslik 110<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. G. Nazan GÜNAY</span><br>
+                            <span class="class-badge">İşletme Doktora</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Pazarlama Kuramı', teacher:'Prof. Dr. G. Nazan GÜNAY', room:'Derslik 110', day:'Çarşamba', hour:'09:00-10:30', classInfo:'İşletme Doktora'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Burcu ŞENTÜRK YILDIZ" data-class="Yönetim Bilimi ve Organizasyon Tezli" data-day="Çarşamba" data-hour="09:00-10:30" data-room="Derslik 101">
+                        <span class="lesson-name">Örgüt Sosyolojisi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 101<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Burcu ŞENTÜRK YILDIZ</span><br>
+                            <span class="class-badge">Yönetim Bilimi ve Organizasyon Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Örgüt Sosyolojisi', teacher:'Doç. Dr. Burcu ŞENTÜRK YILDIZ', room:'Derslik 101', day:'Çarşamba', hour:'09:00-10:30', classInfo:'Yönetim Bilimi ve Organizasyon Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Elif ÜSTÜNDAĞLI ERTEN" data-class="3. Sınıf" data-day="Çarşamba" data-hour="09:00-10:30" data-room="Derslik 208">
+                        <span class="lesson-name">Reklamcılık Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 208<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Elif ÜSTÜNDAĞLI ERTEN</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Reklamcılık Yönetimi', teacher:'Doç. Dr. Elif ÜSTÜNDAĞLI ERTEN', room:'Derslik 208', day:'Çarşamba', hour:'09:00-10:30', classInfo:'3. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Miray BAYBARS" data-class="Pazarlama Tezli" data-day="Çarşamba" data-hour="09:00-10:30" data-room="Derslik 105">
+                        <span class="lesson-name">E-Pazarlama</span>
+                        <div class="lesson-info">
+                            📍 Derslik 105<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Miray BAYBARS</span><br>
+                            <span class="class-badge">Pazarlama Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'E-Pazarlama', teacher:'Dr. Öğr. Üyesi Miray BAYBARS', room:'Derslik 105', day:'Çarşamba', hour:'09:00-10:30', classInfo:'Pazarlama Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Araş. Gör. Dr. Özgür BABACAN" data-class="2. Sınıf" data-day="Perşembe" data-hour="09:00-10:30" data-room="Derslik 202">
+                        <span class="lesson-name">Muhasebe I</span>
+                        <div class="lesson-info">
+                            📍 Derslik 202<br>
+                            👨‍🏫 <span class="teacher-name">Araş. Gör. Dr. Özgür BABACAN</span><br>
+                            <span class="class-badge">2. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Muhasebe I', teacher:'Araş. Gör. Dr. Özgür BABACAN', room:'Derslik 202', day:'Perşembe', hour:'09:00-10:30', classInfo:'2. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Aydın KOÇAK" data-class="İşletme Tezli" data-day="Perşembe" data-hour="09:00-10:30" data-room="Derslik 203">
+                        <span class="lesson-name">Stok Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 203<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Aydın KOÇAK</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Stok Yönetimi', teacher:'Doç. Dr. Aydın KOÇAK', room:'Derslik 203', day:'Perşembe', hour:'09:00-10:30', classInfo:'İşletme Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. U. Gökay ÇİÇEKLİ" data-class="Üretim Yönetimi ve Sayısal Yöntemler Tezli" data-day="Perşembe" data-hour="09:00-10:30" data-room="Derslik 303">
+                        <span class="lesson-name">Yönetim Bilişim Sistemleri</span>
+                        <div class="lesson-info">
+                            📍 Derslik 303<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. U. Gökay ÇİÇEKLİ</span><br>
+                            <span class="class-badge">Üretim Yönetimi ve Sayısal Yöntemler Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Yönetim Bilişim Sistemleri', teacher:'Doç. Dr. U. Gökay ÇİÇEKLİ', room:'Derslik 303', day:'Perşembe', hour:'09:00-10:30', classInfo:'Üretim Yönetimi ve Sayısal Yöntemler Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Esin GÜRBÜZ" data-class="3. Sınıf" data-day="Perşembe" data-hour="09:00-10:30" data-room="Derslik 209">
+                        <span class="lesson-name">Borçlar Hukuku</span>
+                        <div class="lesson-info">
+                            📍 Derslik 209<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Esin GÜRBÜZ</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Borçlar Hukuku', teacher:'Dr. Öğr. Üyesi Esin GÜRBÜZ', room:'Derslik 209', day:'Perşembe', hour:'09:00-10:30', classInfo:'3. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Araş. Gör. Dr. Özgür BABACAN" data-class="İşletme Tezli" data-day="Cuma" data-hour="09:00-10:30" data-room="Derslik 103">
+                        <span class="lesson-name">Yatırım Analizi ve Portföy Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 103<br>
+                            👨‍🏫 <span class="teacher-name">Araş. Gör. Dr. Özgür BABACAN</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Yatırım Analizi ve Portföy Yönetimi', teacher:'Araş. Gör. Dr. Özgür BABACAN', room:'Derslik 103', day:'Cuma', hour:'09:00-10:30', classInfo:'İşletme Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Aydın KOÇAK" data-class="Üretim Yönetimi ve Sayısal Yöntemler Doktora" data-day="Cuma" data-hour="09:00-10:30" data-room="Derslik 101">
+                        <span class="lesson-name">Stratejik Stok Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 101<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Aydın KOÇAK</span><br>
+                            <span class="class-badge">Üretim Yönetimi ve Sayısal Yöntemler Doktora</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Stratejik Stok Yönetimi', teacher:'Doç. Dr. Aydın KOÇAK', room:'Derslik 101', day:'Cuma', hour:'09:00-10:30', classInfo:'Üretim Yönetimi ve Sayısal Yöntemler Doktora'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Sema AYDIN" data-class="0. Sınıf" data-day="Cuma" data-hour="09:00-10:30" data-room="Derslik 202">
+                        <span class="lesson-name">Ticaret Hukuku (Tasfiye)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 202<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Sema AYDIN</span><br>
+                            <span class="class-badge">0. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Ticaret Hukuku (Tasfiye)', teacher:'Doç. Dr. Sema AYDIN', room:'Derslik 202', day:'Cuma', hour:'09:00-10:30', classInfo:'0. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="ÖĞRETMEN 2" data-class="1. Sınıf" data-day="Cuma" data-hour="09:00-10:30" data-room="Derslik 208">
+                        <span class="lesson-name">Matematik-I (Çift)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 208<br>
+                            👨‍🏫 <span class="teacher-name">ÖĞRETMEN 2</span><br>
+                            <span class="class-badge">1. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Matematik-I (Çift)', teacher:'ÖĞRETMEN 2', room:'Derslik 208', day:'Cuma', hour:'09:00-10:30', classInfo:'1. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td></tr><tr><td class='time-cell'>10:30-12:00</td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. Burak ÇAPRAZ" data-class="Yönetim ve Organizasyon Doktora" data-day="Pazartesi" data-hour="10:30-12:00" data-room="Derslik 201">
+                        <span class="lesson-name">Stratejik Yönetimde Güncel Konular</span>
+                        <div class="lesson-info">
+                            📍 Derslik 201<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Burak ÇAPRAZ</span><br>
+                            <span class="class-badge">Yönetim ve Organizasyon Doktora</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Stratejik Yönetimde Güncel Konular', teacher:'Prof. Dr. Burak ÇAPRAZ', room:'Derslik 201', day:'Pazartesi', hour:'10:30-12:00', classInfo:'Yönetim ve Organizasyon Doktora'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Burcu ARACIOĞLU" data-class="İşletme Tezli" data-day="Pazartesi" data-hour="10:30-12:00" data-room="Derslik 108">
+                        <span class="lesson-name">Tedarik Zinciri Yönetimi ve Lojistik</span>
+                        <div class="lesson-info">
+                            📍 Derslik 108<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Burcu ARACIOĞLU</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Tedarik Zinciri Yönetimi ve Lojistik', teacher:'Prof. Dr. Burcu ARACIOĞLU', room:'Derslik 108', day:'Pazartesi', hour:'10:30-12:00', classInfo:'İşletme Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Murat KOCAMAZ" data-class="Üretim Yönetimi ve Sayısal Yöntemler Doktora" data-day="Pazartesi" data-hour="10:30-12:00" data-room="Derslik 111">
+                        <span class="lesson-name">İleri Üretim Çizelgeleme</span>
+                        <div class="lesson-info">
+                            📍 Derslik 111<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Murat KOCAMAZ</span><br>
+                            <span class="class-badge">Üretim Yönetimi ve Sayısal Yöntemler Doktora</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'İleri Üretim Çizelgeleme', teacher:'Prof. Dr. Murat KOCAMAZ', room:'Derslik 111', day:'Pazartesi', hour:'10:30-12:00', classInfo:'Üretim Yönetimi ve Sayısal Yöntemler Doktora'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU" data-class="3. Sınıf" data-day="Salı" data-hour="10:30-12:00" data-room="Derslik 208">
+                        <span class="lesson-name">Girişimcilik ve KOBİ Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 208<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Girişimcilik ve KOBİ Yönetimi', teacher:'Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU', room:'Derslik 208', day:'Salı', hour:'10:30-12:00', classInfo:'3. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ" data-class="Yönetim ve Organizasyon Doktora" data-day="Salı" data-hour="10:30-12:00" data-room="Derslik 210">
+                        <span class="lesson-name">İleri Örgütsel Davranış</span>
+                        <div class="lesson-info">
+                            📍 Derslik 210<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ</span><br>
+                            <span class="class-badge">Yönetim ve Organizasyon Doktora</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'İleri Örgütsel Davranış', teacher:'Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ', room:'Derslik 210', day:'Salı', hour:'10:30-12:00', classInfo:'Yönetim ve Organizasyon Doktora'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Keti VENTURA" data-class="4. Sınıf" data-day="Salı" data-hour="10:30-12:00" data-room="Derslik 103">
+                        <span class="lesson-name">Global Marketing (Çift)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 103<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Keti VENTURA</span><br>
+                            <span class="class-badge">4. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Global Marketing (Çift)', teacher:'Prof. Dr. Keti VENTURA', room:'Derslik 103', day:'Salı', hour:'10:30-12:00', classInfo:'4. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ" data-class="İşletme Tezli" data-day="Çarşamba" data-hour="10:30-12:00" data-room="Derslik 211">
+                        <span class="lesson-name">Örgütsel Davranış</span>
+                        <div class="lesson-info">
+                            📍 Derslik 211<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Örgütsel Davranış', teacher:'Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ', room:'Derslik 211', day:'Çarşamba', hour:'10:30-12:00', classInfo:'İşletme Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Burcu ARACIOĞLU" data-class="Üretim Yönetimi ve Sayısal Yöntemler Doktora" data-day="Çarşamba" data-hour="10:30-12:00" data-room="Derslik 103">
+                        <span class="lesson-name">Bilimsel Araştırma Yöntemleri ve Etik</span>
+                        <div class="lesson-info">
+                            📍 Derslik 103<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Burcu ARACIOĞLU</span><br>
+                            <span class="class-badge">Üretim Yönetimi ve Sayısal Yöntemler Doktora</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Bilimsel Araştırma Yöntemleri ve Etik', teacher:'Prof. Dr. Burcu ARACIOĞLU', room:'Derslik 103', day:'Çarşamba', hour:'10:30-12:00', classInfo:'Üretim Yönetimi ve Sayısal Yöntemler Doktora'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Türker SUSMUŞ" data-class="0. Sınıf" data-day="Çarşamba" data-hour="10:30-12:00" data-room="Derslik 104">
+                        <span class="lesson-name">Muhasebe II (Tasfiye)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 104<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Türker SUSMUŞ</span><br>
+                            <span class="class-badge">0. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Muhasebe II (Tasfiye)', teacher:'Prof. Dr. Türker SUSMUŞ', room:'Derslik 104', day:'Çarşamba', hour:'10:30-12:00', classInfo:'0. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ" data-class="Yönetim Bilimi ve Organizasyon Tezli" data-day="Perşembe" data-hour="10:30-12:00" data-room="Derslik 303">
+                        <span class="lesson-name">Örgütsel Davranış</span>
+                        <div class="lesson-info">
+                            📍 Derslik 303<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ</span><br>
+                            <span class="class-badge">Yönetim Bilimi ve Organizasyon Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Örgütsel Davranış', teacher:'Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ', room:'Derslik 303', day:'Perşembe', hour:'10:30-12:00', classInfo:'Yönetim Bilimi ve Organizasyon Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Burcu ARACIOĞLU" data-class="Üretim Yönetimi Tezli" data-day="Perşembe" data-hour="10:30-12:00" data-room="Derslik 109">
+                        <span class="lesson-name">Tedarik Zinciri Yönetimi ve Lojistik</span>
+                        <div class="lesson-info">
+                            📍 Derslik 109<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Burcu ARACIOĞLU</span><br>
+                            <span class="class-badge">Üretim Yönetimi Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Tedarik Zinciri Yönetimi ve Lojistik', teacher:'Prof. Dr. Burcu ARACIOĞLU', room:'Derslik 109', day:'Perşembe', hour:'10:30-12:00', classInfo:'Üretim Yönetimi Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Keti VENTURA" data-class="Pazarlama Tezli" data-day="Perşembe" data-hour="10:30-12:00" data-room="Derslik 102">
+                        <span class="lesson-name">Pazarlamada Güncel Konular</span>
+                        <div class="lesson-info">
+                            📍 Derslik 102<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Keti VENTURA</span><br>
+                            <span class="class-badge">Pazarlama Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Pazarlamada Güncel Konular', teacher:'Prof. Dr. Keti VENTURA', room:'Derslik 102', day:'Perşembe', hour:'10:30-12:00', classInfo:'Pazarlama Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. Aykan CANDEMİR" data-class="İşletme Tezli" data-day="Cuma" data-hour="10:30-12:00" data-room="Derslik 302">
+                        <span class="lesson-name">Pazarlama Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 302<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Aykan CANDEMİR</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Pazarlama Yönetimi', teacher:'Prof. Dr. Aykan CANDEMİR', room:'Derslik 302', day:'Cuma', hour:'10:30-12:00', classInfo:'İşletme Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Burcu ARACIOĞLU" data-class="3. Sınıf" data-day="Cuma" data-hour="10:30-12:00" data-room="Derslik 303">
+                        <span class="lesson-name">Küresel Tedarik Zinciri ve Lojistik</span>
+                        <div class="lesson-info">
+                            📍 Derslik 303<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Burcu ARACIOĞLU</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Küresel Tedarik Zinciri ve Lojistik', teacher:'Prof. Dr. Burcu ARACIOĞLU', room:'Derslik 303', day:'Cuma', hour:'10:30-12:00', classInfo:'3. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Derya İLİC" data-class="3. Sınıf" data-day="Cuma" data-hour="10:30-12:00" data-room="Derslik 104">
+                        <span class="lesson-name">Yönetim Geliştirme</span>
+                        <div class="lesson-info">
+                            📍 Derslik 104<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Derya İLİC</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Yönetim Geliştirme', teacher:'Prof. Dr. Derya İLİC', room:'Derslik 104', day:'Cuma', hour:'10:30-12:00', classInfo:'3. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td></tr><tr><td class='time-cell'>13:00-14:30</td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. G. Nazan GÜNAY" data-class="2. Sınıf" data-day="Pazartesi" data-hour="13:00-14:30" data-room="Derslik 109">
+                        <span class="lesson-name">Marketing Management I</span>
+                        <div class="lesson-info">
+                            📍 Derslik 109<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. G. Nazan GÜNAY</span><br>
+                            <span class="class-badge">2. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Marketing Management I', teacher:'Prof. Dr. G. Nazan GÜNAY', room:'Derslik 109', day:'Pazartesi', hour:'13:00-14:30', classInfo:'2. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Haluk SOYUER" data-class="Üretim Yönetimi ve Sayısal Yöntemler Tezli" data-day="Pazartesi" data-hour="13:00-14:30" data-room="Derslik 209">
+                        <span class="lesson-name">Üretimde Yenilik ve Teknoloji Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 209<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Haluk SOYUER</span><br>
+                            <span class="class-badge">Üretim Yönetimi ve Sayısal Yöntemler Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Üretimde Yenilik ve Teknoloji Yönetimi', teacher:'Prof. Dr. Haluk SOYUER', room:'Derslik 209', day:'Pazartesi', hour:'13:00-14:30', classInfo:'Üretim Yönetimi ve Sayısal Yöntemler Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. U. Gökay ÇİÇEKLİ" data-class="İşletme Tezli" data-day="Pazartesi" data-hour="13:00-14:30" data-room="Derslik 104">
+                        <span class="lesson-name">Üretim ve İşlemler Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 104<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. U. Gökay ÇİÇEKLİ</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Üretim ve İşlemler Yönetimi', teacher:'Doç. Dr. U. Gökay ÇİÇEKLİ', room:'Derslik 104', day:'Pazartesi', hour:'13:00-14:30', classInfo:'İşletme Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Esin GÜRBÜZ" data-class="3. Sınıf" data-day="Pazartesi" data-hour="13:00-14:30" data-room="Derslik 205">
+                        <span class="lesson-name">İşletme Hukuku</span>
+                        <div class="lesson-info">
+                            📍 Derslik 205<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Esin GÜRBÜZ</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'İşletme Hukuku', teacher:'Dr. Öğr. Üyesi Esin GÜRBÜZ', room:'Derslik 205', day:'Pazartesi', hour:'13:00-14:30', classInfo:'3. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. Haluk SOYUER" data-class="3. Sınıf" data-day="Salı" data-hour="13:00-14:30" data-room="Derslik 111">
+                        <span class="lesson-name">Teknoloji ve Sanayi Dinamikleri</span>
+                        <div class="lesson-info">
+                            📍 Derslik 111<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Haluk SOYUER</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Teknoloji ve Sanayi Dinamikleri', teacher:'Prof. Dr. Haluk SOYUER', room:'Derslik 111', day:'Salı', hour:'13:00-14:30', classInfo:'3. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. G. Nazan GÜNAY" data-class="İşletme Tezli" data-day="Salı" data-hour="13:00-14:30" data-room="Derslik 302">
+                        <span class="lesson-name">Tüketici Davranışları</span>
+                        <div class="lesson-info">
+                            📍 Derslik 302<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. G. Nazan GÜNAY</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Tüketici Davranışları', teacher:'Prof. Dr. G. Nazan GÜNAY', room:'Derslik 302', day:'Salı', hour:'13:00-14:30', classInfo:'İşletme Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Burcu ŞENTÜRK YILDIZ" data-class="Yönetim ve Organizasyon Doktora" data-day="Salı" data-hour="13:00-14:30" data-room="Derslik 201">
+                        <span class="lesson-name">İleri Örgüt Sosyolojisi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 201<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Burcu ŞENTÜRK YILDIZ</span><br>
+                            <span class="class-badge">Yönetim ve Organizasyon Doktora</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'İleri Örgüt Sosyolojisi', teacher:'Doç. Dr. Burcu ŞENTÜRK YILDIZ', room:'Derslik 201', day:'Salı', hour:'13:00-14:30', classInfo:'Yönetim ve Organizasyon Doktora'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="ÖĞRETMEN 3" data-class="1. Sınıf" data-day="Çarşamba" data-hour="13:00-14:30" data-room="Derslik 109">
+                        <span class="lesson-name">Introduction to Microeconomics</span>
+                        <div class="lesson-info">
+                            📍 Derslik 109<br>
+                            👨‍🏫 <span class="teacher-name">ÖĞRETMEN 3</span><br>
+                            <span class="class-badge">1. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Introduction to Microeconomics', teacher:'ÖĞRETMEN 3', room:'Derslik 109', day:'Çarşamba', hour:'13:00-14:30', classInfo:'1. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Aydın KOÇAK" data-class="Üretim Yönetimi Tezli" data-day="Çarşamba" data-hour="13:00-14:30" data-room="Derslik 104">
+                        <span class="lesson-name">Stok Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 104<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Aydın KOÇAK</span><br>
+                            <span class="class-badge">Üretim Yönetimi Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Stok Yönetimi', teacher:'Doç. Dr. Aydın KOÇAK', room:'Derslik 104', day:'Çarşamba', hour:'13:00-14:30', classInfo:'Üretim Yönetimi Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. U. Gökay ÇİÇEKLİ" data-class="Üretim Yönetimi ve Sayısal Yöntemler Doktora" data-day="Çarşamba" data-hour="13:00-14:30" data-room="Derslik 201">
+                        <span class="lesson-name">Modelleme ve Optimizasyon</span>
+                        <div class="lesson-info">
+                            📍 Derslik 201<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. U. Gökay ÇİÇEKLİ</span><br>
+                            <span class="class-badge">Üretim Yönetimi ve Sayısal Yöntemler Doktora</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Modelleme ve Optimizasyon', teacher:'Doç. Dr. U. Gökay ÇİÇEKLİ', room:'Derslik 201', day:'Çarşamba', hour:'13:00-14:30', classInfo:'Üretim Yönetimi ve Sayısal Yöntemler Doktora'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. G. Nazan GÜNAY" data-class="4. Sınıf" data-day="Perşembe" data-hour="13:00-14:30" data-room="Derslik 111">
+                        <span class="lesson-name">Vestel İşletmecilik Seminerleri I</span>
+                        <div class="lesson-info">
+                            📍 Derslik 111<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. G. Nazan GÜNAY</span><br>
+                            <span class="class-badge">4. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Vestel İşletmecilik Seminerleri I', teacher:'Prof. Dr. G. Nazan GÜNAY', room:'Derslik 111', day:'Perşembe', hour:'13:00-14:30', classInfo:'4. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. İnanç KABASAKAL" data-class="3. Sınıf" data-day="Perşembe" data-hour="13:00-14:30" data-room="Derslik 103">
+                        <span class="lesson-name">Bilgi Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 103<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. İnanç KABASAKAL</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Bilgi Yönetimi', teacher:'Doç. Dr. İnanç KABASAKAL', room:'Derslik 103', day:'Perşembe', hour:'13:00-14:30', classInfo:'3. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU" data-class="İşletme Tezli" data-day="Perşembe" data-hour="13:00-14:30" data-room="Derslik 110">
+                        <span class="lesson-name">Bilimsel Araştırma Yöntemleri ve Etik</span>
+                        <div class="lesson-info">
+                            📍 Derslik 110<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Bilimsel Araştırma Yöntemleri ve Etik', teacher:'Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU', room:'Derslik 110', day:'Perşembe', hour:'13:00-14:30', classInfo:'İşletme Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Miray BAYBARS" data-class="1. Sınıf" data-day="Perşembe" data-hour="13:00-14:30" data-room="Derslik 102">
+                        <span class="lesson-name">Business</span>
+                        <div class="lesson-info">
+                            📍 Derslik 102<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Miray BAYBARS</span><br>
+                            <span class="class-badge">1. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Business', teacher:'Dr. Öğr. Üyesi Miray BAYBARS', room:'Derslik 102', day:'Perşembe', hour:'13:00-14:30', classInfo:'1. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. Türker SUSMUŞ" data-class="3. Sınıf" data-day="Cuma" data-hour="13:00-14:30" data-room="Derslik 110">
+                        <span class="lesson-name">Uygulamalı Finansal Piyasa İşlemleri</span>
+                        <div class="lesson-info">
+                            📍 Derslik 110<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Türker SUSMUŞ</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Uygulamalı Finansal Piyasa İşlemleri', teacher:'Prof. Dr. Türker SUSMUŞ', room:'Derslik 110', day:'Cuma', hour:'13:00-14:30', classInfo:'3. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="ÖĞRETMEN 5" data-class="1. Sınıf" data-day="Cuma" data-hour="13:00-14:30" data-room="Derslik 211">
+                        <span class="lesson-name">Atatürk İlkeleri ve İnkılap Tarihi I</span>
+                        <div class="lesson-info">
+                            📍 Derslik 211<br>
+                            👨‍🏫 <span class="teacher-name">ÖĞRETMEN 5</span><br>
+                            <span class="class-badge">1. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Atatürk İlkeleri ve İnkılap Tarihi I', teacher:'ÖĞRETMEN 5', room:'Derslik 211', day:'Cuma', hour:'13:00-14:30', classInfo:'1. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Miray BAYBARS" data-class="4. Sınıf" data-day="Cuma" data-hour="13:00-14:30" data-room="Derslik 302">
+                        <span class="lesson-name">Retailing I</span>
+                        <div class="lesson-info">
+                            📍 Derslik 302<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Miray BAYBARS</span><br>
+                            <span class="class-badge">4. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Retailing I', teacher:'Dr. Öğr. Üyesi Miray BAYBARS', room:'Derslik 302', day:'Cuma', hour:'13:00-14:30', classInfo:'4. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td></tr><tr><td class='time-cell'>14:30-16:00</td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. Ayla Özhan DEDEOĞLU" data-class="3. Sınıf" data-day="Pazartesi" data-hour="14:30-16:00" data-room="Derslik 302">
+                        <span class="lesson-name">Consumer Behavior (Tek)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 302<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Ayla Özhan DEDEOĞLU</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Consumer Behavior (Tek)', teacher:'Prof. Dr. Ayla Özhan DEDEOĞLU', room:'Derslik 302', day:'Pazartesi', hour:'14:30-16:00', classInfo:'3. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. İpek KAZANÇOĞLU" data-class="Pazarlama Tezli" data-day="Pazartesi" data-hour="14:30-16:00" data-room="Derslik 108">
+                        <span class="lesson-name">Endüstriyel Pazarlama</span>
+                        <div class="lesson-info">
+                            📍 Derslik 108<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. İpek KAZANÇOĞLU</span><br>
+                            <span class="class-badge">Pazarlama Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Endüstriyel Pazarlama', teacher:'Prof. Dr. İpek KAZANÇOĞLU', room:'Derslik 108', day:'Pazartesi', hour:'14:30-16:00', classInfo:'Pazarlama Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Keti VENTURA" data-class="İşletme Tezli" data-day="Pazartesi" data-hour="14:30-16:00" data-room="Derslik 205">
+                        <span class="lesson-name">Pazarlamada Güncel Konular</span>
+                        <div class="lesson-info">
+                            📍 Derslik 205<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Keti VENTURA</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Pazarlamada Güncel Konular', teacher:'Prof. Dr. Keti VENTURA', room:'Derslik 205', day:'Pazartesi', hour:'14:30-16:00', classInfo:'İşletme Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Miray BAYBARS" data-class="1. Sınıf" data-day="Salı" data-hour="14:30-16:00" data-room="Derslik 103">
+                        <span class="lesson-name">Kariyer Planlama</span>
+                        <div class="lesson-info">
+                            📍 Derslik 103<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Miray BAYBARS</span><br>
+                            <span class="class-badge">1. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Kariyer Planlama', teacher:'Dr. Öğr. Üyesi Miray BAYBARS', room:'Derslik 103', day:'Salı', hour:'14:30-16:00', classInfo:'1. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Derya İLİC" data-class="Yönetim Bilimi ve Organizasyon Tezli" data-day="Salı" data-hour="14:30-16:00" data-room="Derslik 203">
+                        <span class="lesson-name">Değişim Yönetimi ve Yönetim Danışmanlığı</span>
+                        <div class="lesson-info">
+                            📍 Derslik 203<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Derya İLİC</span><br>
+                            <span class="class-badge">Yönetim Bilimi ve Organizasyon Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Değişim Yönetimi ve Yönetim Danışmanlığı', teacher:'Prof. Dr. Derya İLİC', room:'Derslik 203', day:'Salı', hour:'14:30-16:00', classInfo:'Yönetim Bilimi ve Organizasyon Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Türker SUSMUŞ" data-class="0. Sınıf" data-day="Salı" data-hour="14:30-16:00" data-room="Derslik 104">
+                        <span class="lesson-name">Muhasebe I (Örgün + İ.Ö.)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 104<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Türker SUSMUŞ</span><br>
+                            <span class="class-badge">0. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Muhasebe I (Örgün + İ.Ö.)', teacher:'Prof. Dr. Türker SUSMUŞ', room:'Derslik 104', day:'Salı', hour:'14:30-16:00', classInfo:'0. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Hakan ERKAL" data-class="İşletme Tezli" data-day="Çarşamba" data-hour="14:30-16:00" data-room="Derslik 202">
+                        <span class="lesson-name">Yönetimde Güncel Yaklaşımlar</span>
+                        <div class="lesson-info">
+                            📍 Derslik 202<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Hakan ERKAL</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Yönetimde Güncel Yaklaşımlar', teacher:'Dr. Öğr. Üyesi Hakan ERKAL', room:'Derslik 202', day:'Çarşamba', hour:'14:30-16:00', classInfo:'İşletme Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Ş. Sertaç ÇAKI" data-class="3. Sınıf" data-day="Çarşamba" data-hour="14:30-16:00" data-room="Derslik 203">
+                        <span class="lesson-name">Mali Tablolar Analizi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 203<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Ş. Sertaç ÇAKI</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Mali Tablolar Analizi', teacher:'Dr. Öğr. Üyesi Ş. Sertaç ÇAKI', room:'Derslik 203', day:'Çarşamba', hour:'14:30-16:00', classInfo:'3. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Derya İLİC" data-class="Yönetim ve Organizasyon Doktora" data-day="Çarşamba" data-hour="14:30-16:00" data-room="Derslik 204">
+                        <span class="lesson-name">İnsan Kaynakları Yönetiminde Yeni Yaklaşımlar</span>
+                        <div class="lesson-info">
+                            📍 Derslik 204<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Derya İLİC</span><br>
+                            <span class="class-badge">Yönetim ve Organizasyon Doktora</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'İnsan Kaynakları Yönetiminde Yeni Yaklaşımlar', teacher:'Prof. Dr. Derya İLİC', room:'Derslik 204', day:'Çarşamba', hour:'14:30-16:00', classInfo:'Yönetim ve Organizasyon Doktora'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. Aykan CANDEMİR" data-class="Pazarlama Tezli" data-day="Perşembe" data-hour="14:30-16:00" data-room="Derslik 109">
+                        <span class="lesson-name">Pazarlama Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 109<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Aykan CANDEMİR</span><br>
+                            <span class="class-badge">Pazarlama Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Pazarlama Yönetimi', teacher:'Prof. Dr. Aykan CANDEMİR', room:'Derslik 109', day:'Perşembe', hour:'14:30-16:00', classInfo:'Pazarlama Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Ayla Özhan DEDEOĞLU" data-class="İşletme Tezli" data-day="Perşembe" data-hour="14:30-16:00" data-room="Derslik 205">
+                        <span class="lesson-name">Hizmet Pazarlaması</span>
+                        <div class="lesson-info">
+                            📍 Derslik 205<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Ayla Özhan DEDEOĞLU</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Hizmet Pazarlaması', teacher:'Prof. Dr. Ayla Özhan DEDEOĞLU', room:'Derslik 205', day:'Perşembe', hour:'14:30-16:00', classInfo:'İşletme Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Murat KOCAMAZ" data-class="Üretim Yönetimi Tezli" data-day="Perşembe" data-hour="14:30-16:00" data-room="Derslik 202">
+                        <span class="lesson-name">Üretim Çizelgeleme</span>
+                        <div class="lesson-info">
+                            📍 Derslik 202<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Murat KOCAMAZ</span><br>
+                            <span class="class-badge">Üretim Yönetimi Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Üretim Çizelgeleme', teacher:'Prof. Dr. Murat KOCAMAZ', room:'Derslik 202', day:'Perşembe', hour:'14:30-16:00', classInfo:'Üretim Yönetimi Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. Burak ÇAPRAZ" data-class="Yönetim Bilimi ve Organizasyon Tezli" data-day="Cuma" data-hour="14:30-16:00" data-room="Derslik 101">
+                        <span class="lesson-name">Bilimsel Araştırma Yöntemleri ve Etik</span>
+                        <div class="lesson-info">
+                            📍 Derslik 101<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Burak ÇAPRAZ</span><br>
+                            <span class="class-badge">Yönetim Bilimi ve Organizasyon Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Bilimsel Araştırma Yöntemleri ve Etik', teacher:'Prof. Dr. Burak ÇAPRAZ', room:'Derslik 101', day:'Cuma', hour:'14:30-16:00', classInfo:'Yönetim Bilimi ve Organizasyon Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Haluk SOYUER" data-class="Üretim Yönetimi ve Sayısal Yöntemler Tezli" data-day="Cuma" data-hour="14:30-16:00" data-room="Derslik 202">
+                        <span class="lesson-name">Seminer</span>
+                        <div class="lesson-info">
+                            📍 Derslik 202<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Haluk SOYUER</span><br>
+                            <span class="class-badge">Üretim Yönetimi ve Sayısal Yöntemler Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Seminer', teacher:'Prof. Dr. Haluk SOYUER', room:'Derslik 202', day:'Cuma', hour:'14:30-16:00', classInfo:'Üretim Yönetimi ve Sayısal Yöntemler Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Murat KOCAMAZ" data-class="İşletme Tezli" data-day="Cuma" data-hour="14:30-16:00" data-room="Derslik 301">
+                        <span class="lesson-name">Üretim Çizelgeleme</span>
+                        <div class="lesson-info">
+                            📍 Derslik 301<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Murat KOCAMAZ</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Üretim Çizelgeleme', teacher:'Prof. Dr. Murat KOCAMAZ', room:'Derslik 301', day:'Cuma', hour:'14:30-16:00', classInfo:'İşletme Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td></tr><tr><td class='time-cell'>16:00-17:30</td><td>
+                    <div class="lesson-card" data-teacher="Doç. Dr. Haydar YALÇIN" data-class="3. Sınıf" data-day="Pazartesi" data-hour="16:00-17:30" data-room="Derslik 103">
+                        <span class="lesson-name">Enformetri</span>
+                        <div class="lesson-info">
+                            📍 Derslik 103<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Haydar YALÇIN</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Enformetri', teacher:'Doç. Dr. Haydar YALÇIN', room:'Derslik 103', day:'Pazartesi', hour:'16:00-17:30', classInfo:'3. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. İnanç KABASAKAL" data-class="2. Sınıf" data-day="Pazartesi" data-hour="16:00-17:30" data-room="Derslik 111">
+                        <span class="lesson-name">İstatistik I</span>
+                        <div class="lesson-info">
+                            📍 Derslik 111<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. İnanç KABASAKAL</span><br>
+                            <span class="class-badge">2. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'İstatistik I', teacher:'Doç. Dr. İnanç KABASAKAL', room:'Derslik 111', day:'Pazartesi', hour:'16:00-17:30', classInfo:'2. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Hakan ERKAL" data-class="Yönetim Bilimi ve Organizasyon Tezli" data-day="Pazartesi" data-hour="16:00-17:30" data-room="Derslik 104">
+                        <span class="lesson-name">Yönetimde Güncel Yaklaşımlar</span>
+                        <div class="lesson-info">
+                            📍 Derslik 104<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Hakan ERKAL</span><br>
+                            <span class="class-badge">Yönetim Bilimi ve Organizasyon Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Yönetimde Güncel Yaklaşımlar', teacher:'Dr. Öğr. Üyesi Hakan ERKAL', room:'Derslik 104', day:'Pazartesi', hour:'16:00-17:30', classInfo:'Yönetim Bilimi ve Organizasyon Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Araş. Gör. Dr. Begüm KANAT TİRYAKİ" data-class="0. Sınıf" data-day="Salı" data-hour="16:00-17:30" data-room="Derslik 101">
+                        <span class="lesson-name">Business I (Tasfiye)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 101<br>
+                            👨‍🏫 <span class="teacher-name">Araş. Gör. Dr. Begüm KANAT TİRYAKİ</span><br>
+                            <span class="class-badge">0. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Business I (Tasfiye)', teacher:'Araş. Gör. Dr. Begüm KANAT TİRYAKİ', room:'Derslik 101', day:'Salı', hour:'16:00-17:30', classInfo:'0. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Haydar YALÇIN" data-class="İşletme Tezli" data-day="Salı" data-hour="16:00-17:30" data-room="Derslik 109">
+                        <span class="lesson-name">Teknoloji Yönetiminin Esasları</span>
+                        <div class="lesson-info">
+                            📍 Derslik 109<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Haydar YALÇIN</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Teknoloji Yönetiminin Esasları', teacher:'Doç. Dr. Haydar YALÇIN', room:'Derslik 109', day:'Salı', hour:'16:00-17:30', classInfo:'İşletme Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU" data-class="3. Sınıf" data-day="Salı" data-hour="16:00-17:30" data-room="Derslik 205">
+                        <span class="lesson-name">Araştırma Yöntemleri (Tek)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 205<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Araştırma Yöntemleri (Tek)', teacher:'Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU', room:'Derslik 205', day:'Salı', hour:'16:00-17:30', classInfo:'3. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Doç. Dr. Burcu ŞENTÜRK YILDIZ" data-class="1. Sınıf" data-day="Çarşamba" data-hour="16:00-17:30" data-room="Derslik 211">
+                        <span class="lesson-name">Sosyoloji</span>
+                        <div class="lesson-info">
+                            📍 Derslik 211<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Burcu ŞENTÜRK YILDIZ</span><br>
+                            <span class="class-badge">1. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Sosyoloji', teacher:'Doç. Dr. Burcu ŞENTÜRK YILDIZ', room:'Derslik 211', day:'Çarşamba', hour:'16:00-17:30', classInfo:'1. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Elif ÜSTÜNDAĞLI ERTEN" data-class="3. Sınıf" data-day="Çarşamba" data-hour="16:00-17:30" data-room="Derslik 301">
+                        <span class="lesson-name">Consumer Behavior (Çift)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 301<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Elif ÜSTÜNDAĞLI ERTEN</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Consumer Behavior (Çift)', teacher:'Doç. Dr. Elif ÜSTÜNDAĞLI ERTEN', room:'Derslik 301', day:'Çarşamba', hour:'16:00-17:30', classInfo:'3. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Miray BAYBARS" data-class="İşletme Tezli" data-day="Çarşamba" data-hour="16:00-17:30" data-room="Derslik 302">
+                        <span class="lesson-name">E-Pazarlama</span>
+                        <div class="lesson-info">
+                            📍 Derslik 302<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Miray BAYBARS</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'E-Pazarlama', teacher:'Dr. Öğr. Üyesi Miray BAYBARS', room:'Derslik 302', day:'Çarşamba', hour:'16:00-17:30', classInfo:'İşletme Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ" data-class="2. Sınıf" data-day="Çarşamba" data-hour="16:00-17:30" data-room="Derslik 210">
+                        <span class="lesson-name">Organizational Behavior (Tek)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 210<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ</span><br>
+                            <span class="class-badge">2. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Organizational Behavior (Tek)', teacher:'Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ', room:'Derslik 210', day:'Çarşamba', hour:'16:00-17:30', classInfo:'2. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Araş. Gör. Dr. Özgür BABACAN" data-class="3. Sınıf" data-day="Perşembe" data-hour="16:00-17:30" data-room="Derslik 303">
+                        <span class="lesson-name">Yatırım Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 303<br>
+                            👨‍🏫 <span class="teacher-name">Araş. Gör. Dr. Özgür BABACAN</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Yatırım Yönetimi', teacher:'Araş. Gör. Dr. Özgür BABACAN', room:'Derslik 303', day:'Perşembe', hour:'16:00-17:30', classInfo:'3. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Elif ÜSTÜNDAĞLI ERTEN" data-class="Pazarlama Tezli" data-day="Perşembe" data-hour="16:00-17:30" data-room="Derslik 101">
+                        <span class="lesson-name">Bilimsel Araştırma Yöntemleri ve Etik</span>
+                        <div class="lesson-info">
+                            📍 Derslik 101<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Elif ÜSTÜNDAĞLI ERTEN</span><br>
+                            <span class="class-badge">Pazarlama Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Bilimsel Araştırma Yöntemleri ve Etik', teacher:'Doç. Dr. Elif ÜSTÜNDAĞLI ERTEN', room:'Derslik 101', day:'Perşembe', hour:'16:00-17:30', classInfo:'Pazarlama Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. U. Gökay ÇİÇEKLİ" data-class="4. Sınıf" data-day="Perşembe" data-hour="16:00-17:30" data-room="Derslik 301">
+                        <span class="lesson-name">System Analysis and Design</span>
+                        <div class="lesson-info">
+                            📍 Derslik 301<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. U. Gökay ÇİÇEKLİ</span><br>
+                            <span class="class-badge">4. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'System Analysis and Design', teacher:'Doç. Dr. U. Gökay ÇİÇEKLİ', room:'Derslik 301', day:'Perşembe', hour:'16:00-17:30', classInfo:'4. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Hakan ERKAL" data-class="Yönetim ve Organizasyon Doktora" data-day="Perşembe" data-hour="16:00-17:30" data-room="Derslik 210">
+                        <span class="lesson-name">Yönetimin Felsefi Temelleri</span>
+                        <div class="lesson-info">
+                            📍 Derslik 210<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Hakan ERKAL</span><br>
+                            <span class="class-badge">Yönetim ve Organizasyon Doktora</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Yönetimin Felsefi Temelleri', teacher:'Dr. Öğr. Üyesi Hakan ERKAL', room:'Derslik 210', day:'Perşembe', hour:'16:00-17:30', classInfo:'Yönetim ve Organizasyon Doktora'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Doç. Dr. Aydın KOÇAK" data-class="3. Sınıf" data-day="Cuma" data-hour="16:00-17:30" data-room="Derslik 103">
+                        <span class="lesson-name">E-İş ve Kurumsal Kaynak Planlama</span>
+                        <div class="lesson-info">
+                            📍 Derslik 103<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Aydın KOÇAK</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'E-İş ve Kurumsal Kaynak Planlama', teacher:'Doç. Dr. Aydın KOÇAK', room:'Derslik 103', day:'Cuma', hour:'16:00-17:30', classInfo:'3. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Sema AYDIN" data-class="1. Sınıf" data-day="Cuma" data-hour="16:00-17:30" data-room="Derslik 301">
+                        <span class="lesson-name">Hukukun Temel Kavramları (Örgün + İ.Ö.)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 301<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Sema AYDIN</span><br>
+                            <span class="class-badge">1. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Hukukun Temel Kavramları (Örgün + İ.Ö.)', teacher:'Doç. Dr. Sema AYDIN', room:'Derslik 301', day:'Cuma', hour:'16:00-17:30', classInfo:'1. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Hakan ERKAL" data-class="2. Sınıf" data-day="Cuma" data-hour="16:00-17:30" data-room="Derslik 205">
+                        <span class="lesson-name">Organizational Behavior (Çift)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 205<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Hakan ERKAL</span><br>
+                            <span class="class-badge">2. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Organizational Behavior (Çift)', teacher:'Dr. Öğr. Üyesi Hakan ERKAL', room:'Derslik 205', day:'Cuma', hour:'16:00-17:30', classInfo:'2. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td></tr><tr><td class='time-cell'>17:30-19:00</td><td>
+                    <div class="lesson-card" data-teacher="ÖĞRETMEN 1" data-class="1. Sınıf" data-day="Pazartesi" data-hour="17:30-19:00" data-room="Derslik 111">
+                        <span class="lesson-name">Matematik-I (Tek)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 111<br>
+                            👨‍🏫 <span class="teacher-name">ÖĞRETMEN 1</span><br>
+                            <span class="class-badge">1. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Matematik-I (Tek)', teacher:'ÖĞRETMEN 1', room:'Derslik 111', day:'Pazartesi', hour:'17:30-19:00', classInfo:'1. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Burak ÇAPRAZ" data-class="4. Sınıf" data-day="Pazartesi" data-hour="17:30-19:00" data-room="Derslik 210">
+                        <span class="lesson-name">Human Resources Management</span>
+                        <div class="lesson-info">
+                            📍 Derslik 210<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Burak ÇAPRAZ</span><br>
+                            <span class="class-badge">4. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Human Resources Management', teacher:'Prof. Dr. Burak ÇAPRAZ', room:'Derslik 210', day:'Pazartesi', hour:'17:30-19:00', classInfo:'4. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Murat KOCAMAZ" data-class="3. Sınıf" data-day="Pazartesi" data-hour="17:30-19:00" data-room="Derslik 211">
+                        <span class="lesson-name">Operations Research I</span>
+                        <div class="lesson-info">
+                            📍 Derslik 211<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Murat KOCAMAZ</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Operations Research I', teacher:'Prof. Dr. Murat KOCAMAZ', room:'Derslik 211', day:'Pazartesi', hour:'17:30-19:00', classInfo:'3. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Ş. Sertaç ÇAKI" data-class="2. Sınıf" data-day="Salı" data-hour="17:30-19:00" data-room="Derslik 202">
+                        <span class="lesson-name">Yönetim Muhasebesi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 202<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Ş. Sertaç ÇAKI</span><br>
+                            <span class="class-badge">2. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Yönetim Muhasebesi', teacher:'Dr. Öğr. Üyesi Ş. Sertaç ÇAKI', room:'Derslik 202', day:'Salı', hour:'17:30-19:00', classInfo:'2. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Ayla Özhan DEDEOĞLU" data-class="Pazarlama Tezli" data-day="Salı" data-hour="17:30-19:00" data-room="Derslik 109">
+                        <span class="lesson-name">Hizmet Pazarlaması</span>
+                        <div class="lesson-info">
+                            📍 Derslik 109<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Ayla Özhan DEDEOĞLU</span><br>
+                            <span class="class-badge">Pazarlama Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Hizmet Pazarlaması', teacher:'Prof. Dr. Ayla Özhan DEDEOĞLU', room:'Derslik 109', day:'Salı', hour:'17:30-19:00', classInfo:'Pazarlama Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. İpek KAZANÇOĞLU" data-class="3. Sınıf" data-day="Salı" data-hour="17:30-19:00" data-room="Derslik 205">
+                        <span class="lesson-name">Sürdürülebilir Pazarlama</span>
+                        <div class="lesson-info">
+                            📍 Derslik 205<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. İpek KAZANÇOĞLU</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Sürdürülebilir Pazarlama', teacher:'Prof. Dr. İpek KAZANÇOĞLU', room:'Derslik 205', day:'Salı', hour:'17:30-19:00', classInfo:'3. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. Ayla Özhan DEDEOĞLU" data-class="Yönetim ve Organizasyon Doktora" data-day="Çarşamba" data-hour="17:30-19:00" data-room="Derslik 204">
+                        <span class="lesson-name">Bilimsel Araştırma Yöntemleri ve Etik</span>
+                        <div class="lesson-info">
+                            📍 Derslik 204<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Ayla Özhan DEDEOĞLU</span><br>
+                            <span class="class-badge">Yönetim ve Organizasyon Doktora</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Bilimsel Araştırma Yöntemleri ve Etik', teacher:'Prof. Dr. Ayla Özhan DEDEOĞLU', room:'Derslik 204', day:'Çarşamba', hour:'17:30-19:00', classInfo:'Yönetim ve Organizasyon Doktora'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. G. Nazan GÜNAY" data-class="Pazarlama Tezli" data-day="Çarşamba" data-hour="17:30-19:00" data-room="Derslik 103">
+                        <span class="lesson-name">Tüketici Davranışları</span>
+                        <div class="lesson-info">
+                            📍 Derslik 103<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. G. Nazan GÜNAY</span><br>
+                            <span class="class-badge">Pazarlama Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Tüketici Davranışları', teacher:'Prof. Dr. G. Nazan GÜNAY', room:'Derslik 103', day:'Çarşamba', hour:'17:30-19:00', classInfo:'Pazarlama Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Türker SUSMUŞ" data-class="0. Sınıf" data-day="Çarşamba" data-hour="17:30-19:00" data-room="Derslik 104">
+                        <span class="lesson-name">Uygulamalı Finansal Piyasa İşlemleri (Örgün)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 104<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Türker SUSMUŞ</span><br>
+                            <span class="class-badge">0. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Uygulamalı Finansal Piyasa İşlemleri (Örgün)', teacher:'Prof. Dr. Türker SUSMUŞ', room:'Derslik 104', day:'Çarşamba', hour:'17:30-19:00', classInfo:'0. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. Burcu ARACIOĞLU" data-class="2. Sınıf" data-day="Perşembe" data-hour="17:30-19:00" data-room="Derslik 302">
+                        <span class="lesson-name">Operations Management I</span>
+                        <div class="lesson-info">
+                            📍 Derslik 302<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Burcu ARACIOĞLU</span><br>
+                            <span class="class-badge">2. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Operations Management I', teacher:'Prof. Dr. Burcu ARACIOĞLU', room:'Derslik 302', day:'Perşembe', hour:'17:30-19:00', classInfo:'2. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Dilek DEMİRHAN" data-class="3. Sınıf" data-day="Perşembe" data-hour="17:30-19:00" data-room="Derslik 205">
+                        <span class="lesson-name">Financial Management I</span>
+                        <div class="lesson-info">
+                            📍 Derslik 205<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Dilek DEMİRHAN</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Financial Management I', teacher:'Prof. Dr. Dilek DEMİRHAN', room:'Derslik 205', day:'Perşembe', hour:'17:30-19:00', classInfo:'3. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. İpek KAZANÇOĞLU" data-class="İşletme Tezli" data-day="Perşembe" data-hour="17:30-19:00" data-room="Derslik 201">
+                        <span class="lesson-name">Endüstriyel Pazarlama</span>
+                        <div class="lesson-info">
+                            📍 Derslik 201<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. İpek KAZANÇOĞLU</span><br>
+                            <span class="class-badge">İşletme Tezli</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Endüstriyel Pazarlama', teacher:'Prof. Dr. İpek KAZANÇOĞLU', room:'Derslik 201', day:'Perşembe', hour:'17:30-19:00', classInfo:'İşletme Tezli'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. Aykan CANDEMİR" data-class="4. Sınıf" data-day="Cuma" data-hour="17:30-19:00" data-room="Derslik 104">
+                        <span class="lesson-name">Global Marketing (Tek)</span>
+                        <div class="lesson-info">
+                            📍 Derslik 104<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Aykan CANDEMİR</span><br>
+                            <span class="class-badge">4. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Global Marketing (Tek)', teacher:'Prof. Dr. Aykan CANDEMİR', room:'Derslik 104', day:'Cuma', hour:'17:30-19:00', classInfo:'4. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Derya İLİC" data-class="3. Sınıf" data-day="Cuma" data-hour="17:30-19:00" data-room="Derslik 202">
+                        <span class="lesson-name">Management Consultancy</span>
+                        <div class="lesson-info">
+                            📍 Derslik 202<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Derya İLİC</span><br>
+                            <span class="class-badge">3. Sınıf</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Management Consultancy', teacher:'Prof. Dr. Derya İLİC', room:'Derslik 202', day:'Cuma', hour:'17:30-19:00', classInfo:'3. Sınıf'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td></tr><tr><td class='time-cell'>19:00-20:00</td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. G. Nazan GÜNAY" data-class="Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz" data-day="Pazartesi" data-hour="19:00-20:00" data-room="Derslik 104">
+                        <span class="lesson-name">Tüketici Davranışları A</span>
+                        <div class="lesson-info">
+                            📍 Derslik 104<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. G. Nazan GÜNAY</span><br>
+                            <span class="class-badge">Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Tüketici Davranışları A', teacher:'Prof. Dr. G. Nazan GÜNAY', room:'Derslik 104', day:'Pazartesi', hour:'19:00-20:00', classInfo:'Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Araş. Gör. Dr. Özgür BABACAN" data-class="Muhasebe ve Finansman İ.Ö. Tezsiz" data-day="Pazartesi" data-hour="19:00-20:00" data-room="Derslik 203">
+                        <span class="lesson-name">Uluslararası Finansman</span>
+                        <div class="lesson-info">
+                            📍 Derslik 203<br>
+                            👨‍🏫 <span class="teacher-name">Araş. Gör. Dr. Özgür BABACAN</span><br>
+                            <span class="class-badge">Muhasebe ve Finansman İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Uluslararası Finansman', teacher:'Araş. Gör. Dr. Özgür BABACAN', room:'Derslik 203', day:'Pazartesi', hour:'19:00-20:00', classInfo:'Muhasebe ve Finansman İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Burcu ŞENTÜRK YILDIZ" data-class="İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz" data-day="Pazartesi" data-hour="19:00-20:00" data-room="Derslik 202">
+                        <span class="lesson-name">İnsan Kaynakları Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 202<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Burcu ŞENTÜRK YILDIZ</span><br>
+                            <span class="class-badge">İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'İnsan Kaynakları Yönetimi', teacher:'Doç. Dr. Burcu ŞENTÜRK YILDIZ', room:'Derslik 202', day:'Pazartesi', hour:'19:00-20:00', classInfo:'İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. U. Gökay ÇİÇEKLİ" data-class="İşletme İ.Ö. Tezsiz" data-day="Pazartesi" data-hour="19:00-20:00" data-room="Derslik 205">
+                        <span class="lesson-name">İşlemler Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 205<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. U. Gökay ÇİÇEKLİ</span><br>
+                            <span class="class-badge">İşletme İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'İşlemler Yönetimi', teacher:'Doç. Dr. U. Gökay ÇİÇEKLİ', room:'Derslik 205', day:'Pazartesi', hour:'19:00-20:00', classInfo:'İşletme İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. G. Nazan GÜNAY" data-class="Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz" data-day="Salı" data-hour="19:00-20:00" data-room="Derslik 204">
+                        <span class="lesson-name">Tüketici Davranışları B</span>
+                        <div class="lesson-info">
+                            📍 Derslik 204<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. G. Nazan GÜNAY</span><br>
+                            <span class="class-badge">Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Tüketici Davranışları B', teacher:'Prof. Dr. G. Nazan GÜNAY', room:'Derslik 204', day:'Salı', hour:'19:00-20:00', classInfo:'Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Haluk SOYUER" data-class="Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz" data-day="Salı" data-hour="19:00-20:00" data-room="Derslik 303">
+                        <span class="lesson-name">Stratejik Üretim Yönetimi ve Üretimde Dijitalleşme</span>
+                        <div class="lesson-info">
+                            📍 Derslik 303<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Haluk SOYUER</span><br>
+                            <span class="class-badge">Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Stratejik Üretim Yönetimi ve Üretimde Dijitalleşme', teacher:'Prof. Dr. Haluk SOYUER', room:'Derslik 303', day:'Salı', hour:'19:00-20:00', classInfo:'Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Burcu ŞENTÜRK YILDIZ" data-class="İşletme İ.Ö. Tezsiz" data-day="Salı" data-hour="19:00-20:00" data-room="Derslik 109">
+                        <span class="lesson-name">Örgütler ve Yönetim</span>
+                        <div class="lesson-info">
+                            📍 Derslik 109<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Burcu ŞENTÜRK YILDIZ</span><br>
+                            <span class="class-badge">İşletme İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Örgütler ve Yönetim', teacher:'Doç. Dr. Burcu ŞENTÜRK YILDIZ', room:'Derslik 109', day:'Salı', hour:'19:00-20:00', classInfo:'İşletme İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. U. Gökay ÇİÇEKLİ" data-class="Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz" data-day="Salı" data-hour="19:00-20:00" data-room="Derslik 105">
+                        <span class="lesson-name">Bilimsel Araştırma Yöntemleri ve Etik</span>
+                        <div class="lesson-info">
+                            📍 Derslik 105<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. U. Gökay ÇİÇEKLİ</span><br>
+                            <span class="class-badge">Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Bilimsel Araştırma Yöntemleri ve Etik', teacher:'Doç. Dr. U. Gökay ÇİÇEKLİ', room:'Derslik 105', day:'Salı', hour:'19:00-20:00', classInfo:'Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ" data-class="İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz" data-day="Salı" data-hour="19:00-20:00" data-room="Derslik 203">
+                        <span class="lesson-name">Örgütsel Davranış</span>
+                        <div class="lesson-info">
+                            📍 Derslik 203<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ</span><br>
+                            <span class="class-badge">İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Örgütsel Davranış', teacher:'Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ', room:'Derslik 203', day:'Salı', hour:'19:00-20:00', classInfo:'İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Doç. Dr. Aydın KOÇAK" data-class="Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz" data-day="Çarşamba" data-hour="19:00-20:00" data-room="Derslik 103">
+                        <span class="lesson-name">Malzeme ve Stok Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 103<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Aydın KOÇAK</span><br>
+                            <span class="class-badge">Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Malzeme ve Stok Yönetimi', teacher:'Doç. Dr. Aydın KOÇAK', room:'Derslik 103', day:'Çarşamba', hour:'19:00-20:00', classInfo:'Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Sema AYDIN" data-class="İşletme İ.Ö. Tezsiz" data-day="Çarşamba" data-hour="19:00-20:00" data-room="Derslik 205">
+                        <span class="lesson-name">Ticaret Hukuku</span>
+                        <div class="lesson-info">
+                            📍 Derslik 205<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Sema AYDIN</span><br>
+                            <span class="class-badge">İşletme İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Ticaret Hukuku', teacher:'Doç. Dr. Sema AYDIN', room:'Derslik 205', day:'Çarşamba', hour:'19:00-20:00', classInfo:'İşletme İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. U. Gökay ÇİÇEKLİ" data-class="Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz" data-day="Çarşamba" data-hour="19:00-20:00" data-room="Derslik 302">
+                        <span class="lesson-name">Akıllı Karar Modelleri</span>
+                        <div class="lesson-info">
+                            📍 Derslik 302<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. U. Gökay ÇİÇEKLİ</span><br>
+                            <span class="class-badge">Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Akıllı Karar Modelleri', teacher:'Doç. Dr. U. Gökay ÇİÇEKLİ', room:'Derslik 302', day:'Çarşamba', hour:'19:00-20:00', classInfo:'Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Hakan ERKAL" data-class="İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz" data-day="Çarşamba" data-hour="19:00-20:00" data-room="Derslik 109">
+                        <span class="lesson-name">Yönetim Atölyesi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 109<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Hakan ERKAL</span><br>
+                            <span class="class-badge">İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Yönetim Atölyesi', teacher:'Dr. Öğr. Üyesi Hakan ERKAL', room:'Derslik 109', day:'Çarşamba', hour:'19:00-20:00', classInfo:'İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Ş. Sertaç ÇAKI" data-class="Muhasebe ve Finansman İ.Ö. Tezsiz" data-day="Çarşamba" data-hour="19:00-20:00" data-room="Derslik 202">
+                        <span class="lesson-name">Sermaye Piyasaları ve Menkul Kıymetler Analizi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 202<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Ş. Sertaç ÇAKI</span><br>
+                            <span class="class-badge">Muhasebe ve Finansman İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Sermaye Piyasaları ve Menkul Kıymetler Analizi', teacher:'Dr. Öğr. Üyesi Ş. Sertaç ÇAKI', room:'Derslik 202', day:'Çarşamba', hour:'19:00-20:00', classInfo:'Muhasebe ve Finansman İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. Haluk SOYUER" data-class="Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz" data-day="Perşembe" data-hour="19:00-20:00" data-room="Derslik 104">
+                        <span class="lesson-name">Tedarik Zinciri ve Lojistik İçin Bilgi Sistemleri</span>
+                        <div class="lesson-info">
+                            📍 Derslik 104<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Haluk SOYUER</span><br>
+                            <span class="class-badge">Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Tedarik Zinciri ve Lojistik İçin Bilgi Sistemleri', teacher:'Prof. Dr. Haluk SOYUER', room:'Derslik 104', day:'Perşembe', hour:'19:00-20:00', classInfo:'Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Aydın KOÇAK" data-class="Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz" data-day="Perşembe" data-hour="19:00-20:00" data-room="Derslik 303">
+                        <span class="lesson-name">Proje Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 303<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Aydın KOÇAK</span><br>
+                            <span class="class-badge">Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Proje Yönetimi', teacher:'Doç. Dr. Aydın KOÇAK', room:'Derslik 303', day:'Perşembe', hour:'19:00-20:00', classInfo:'Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU" data-class="İşletme İ.Ö. Tezsiz" data-day="Perşembe" data-hour="19:00-20:00" data-room="Derslik 211">
+                        <span class="lesson-name">Pazarlama Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 211<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU</span><br>
+                            <span class="class-badge">İşletme İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Pazarlama Yönetimi', teacher:'Dr. Öğr. Üyesi A. Erhan ZALLUHOĞLU', room:'Derslik 211', day:'Perşembe', hour:'19:00-20:00', classInfo:'İşletme İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Esin GÜRBÜZ" data-class="İşletme İ.Ö. Tezsiz" data-day="Perşembe" data-hour="19:00-20:00" data-room="Derslik 102">
+                        <span class="lesson-name">Ticaret Hukuku</span>
+                        <div class="lesson-info">
+                            📍 Derslik 102<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Esin GÜRBÜZ</span><br>
+                            <span class="class-badge">İşletme İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Ticaret Hukuku', teacher:'Dr. Öğr. Üyesi Esin GÜRBÜZ', room:'Derslik 102', day:'Perşembe', hour:'19:00-20:00', classInfo:'İşletme İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Dr. Öğr. Üyesi Ş. Sertaç ÇAKI" data-class="Muhasebe ve Finansman İ.Ö. Tezsiz" data-day="Perşembe" data-hour="19:00-20:00" data-room="Derslik 203">
+                        <span class="lesson-name">Vadeli İşlem Piyasaları</span>
+                        <div class="lesson-info">
+                            📍 Derslik 203<br>
+                            👨‍🏫 <span class="teacher-name">Dr. Öğr. Üyesi Ş. Sertaç ÇAKI</span><br>
+                            <span class="class-badge">Muhasebe ve Finansman İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Vadeli İşlem Piyasaları', teacher:'Dr. Öğr. Üyesi Ş. Sertaç ÇAKI', room:'Derslik 203', day:'Perşembe', hour:'19:00-20:00', classInfo:'Muhasebe ve Finansman İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. Haluk SOYUER" data-class="Uzaktan Öğretim İşletme Tezsiz" data-day="Cuma" data-hour="19:00-20:00" data-room="Derslik 101">
+                        <span class="lesson-name">İşlemler Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 101<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Haluk SOYUER</span><br>
+                            <span class="class-badge">Uzaktan Öğretim İşletme Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'İşlemler Yönetimi', teacher:'Prof. Dr. Haluk SOYUER', room:'Derslik 101', day:'Cuma', hour:'19:00-20:00', classInfo:'Uzaktan Öğretim İşletme Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. Haydar YALÇIN" data-class="Muhasebe ve Finansman İ.Ö. Tezsiz" data-day="Cuma" data-hour="19:00-20:00" data-room="Derslik 205">
+                        <span class="lesson-name">Bilimsel Araştırma Yöntemleri ve Etik</span>
+                        <div class="lesson-info">
+                            📍 Derslik 205<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. Haydar YALÇIN</span><br>
+                            <span class="class-badge">Muhasebe ve Finansman İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Bilimsel Araştırma Yöntemleri ve Etik', teacher:'Doç. Dr. Haydar YALÇIN', room:'Derslik 205', day:'Cuma', hour:'19:00-20:00', classInfo:'Muhasebe ve Finansman İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Doç. Dr. İnanç KABASAKAL" data-class="Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz" data-day="Cuma" data-hour="19:00-20:00" data-room="Derslik 105">
+                        <span class="lesson-name">İş Analitiğinde Sayısal Yöntemler</span>
+                        <div class="lesson-info">
+                            📍 Derslik 105<br>
+                            👨‍🏫 <span class="teacher-name">Doç. Dr. İnanç KABASAKAL</span><br>
+                            <span class="class-badge">Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'İş Analitiğinde Sayısal Yöntemler', teacher:'Doç. Dr. İnanç KABASAKAL', room:'Derslik 105', day:'Cuma', hour:'19:00-20:00', classInfo:'Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Burak ÇAPRAZ" data-class="İşletme İ.Ö. Tezsiz" data-day="Cuma" data-hour="19:00-20:00" data-room="Derslik 202">
+                        <span class="lesson-name">Örgütler ve Yönetim</span>
+                        <div class="lesson-info">
+                            📍 Derslik 202<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Burak ÇAPRAZ</span><br>
+                            <span class="class-badge">İşletme İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Örgütler ve Yönetim', teacher:'Prof. Dr. Burak ÇAPRAZ', room:'Derslik 202', day:'Cuma', hour:'19:00-20:00', classInfo:'İşletme İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td></tr><tr><td class='time-cell'>20:00-21:00</td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. Burcu ARACIOĞLU" data-class="Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz" data-day="Pazartesi" data-hour="20:00-21:00" data-room="Derslik 110">
+                        <span class="lesson-name">Stratejik Yatırım Kararları ve Planlama</span>
+                        <div class="lesson-info">
+                            📍 Derslik 110<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Burcu ARACIOĞLU</span><br>
+                            <span class="class-badge">Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Stratejik Yatırım Kararları ve Planlama', teacher:'Prof. Dr. Burcu ARACIOĞLU', room:'Derslik 110', day:'Pazartesi', hour:'20:00-21:00', classInfo:'Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Dilek DEMİRHAN" data-class="İşletme İ.Ö. Tezsiz" data-day="Pazartesi" data-hour="20:00-21:00" data-room="Derslik 302">
+                        <span class="lesson-name">Stratejik İşletme Finansı</span>
+                        <div class="lesson-info">
+                            📍 Derslik 302<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Dilek DEMİRHAN</span><br>
+                            <span class="class-badge">İşletme İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Stratejik İşletme Finansı', teacher:'Prof. Dr. Dilek DEMİRHAN', room:'Derslik 302', day:'Pazartesi', hour:'20:00-21:00', classInfo:'İşletme İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. İpek KAZANÇOĞLU" data-class="Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz" data-day="Pazartesi" data-hour="20:00-21:00" data-room="Derslik 102">
+                        <span class="lesson-name">Perakendecilik</span>
+                        <div class="lesson-info">
+                            📍 Derslik 102<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. İpek KAZANÇOĞLU</span><br>
+                            <span class="class-badge">Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Perakendecilik', teacher:'Prof. Dr. İpek KAZANÇOĞLU', room:'Derslik 102', day:'Pazartesi', hour:'20:00-21:00', classInfo:'Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Keti VENTURA" data-class="Uzaktan Öğretim İşletme Tezsiz" data-day="Pazartesi" data-hour="20:00-21:00" data-room="Derslik 105">
+                        <span class="lesson-name">Pazarlama Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 105<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Keti VENTURA</span><br>
+                            <span class="class-badge">Uzaktan Öğretim İşletme Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Pazarlama Yönetimi', teacher:'Prof. Dr. Keti VENTURA', room:'Derslik 105', day:'Pazartesi', hour:'20:00-21:00', classInfo:'Uzaktan Öğretim İşletme Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. Burak ÇAPRAZ" data-class="İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz" data-day="Salı" data-hour="20:00-21:00" data-room="Derslik 205">
+                        <span class="lesson-name">Bilimsel Araştırma Yöntemleri ve Etik</span>
+                        <div class="lesson-info">
+                            📍 Derslik 205<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Burak ÇAPRAZ</span><br>
+                            <span class="class-badge">İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Bilimsel Araştırma Yöntemleri ve Etik', teacher:'Prof. Dr. Burak ÇAPRAZ', room:'Derslik 205', day:'Salı', hour:'20:00-21:00', classInfo:'İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Derya İLİC" data-class="Uzaktan Öğretim İşletme Tezsiz" data-day="Salı" data-hour="20:00-21:00" data-room="Derslik 111">
+                        <span class="lesson-name">Örgütler ve Yönetim</span>
+                        <div class="lesson-info">
+                            📍 Derslik 111<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Derya İLİC</span><br>
+                            <span class="class-badge">Uzaktan Öğretim İşletme Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Örgütler ve Yönetim', teacher:'Prof. Dr. Derya İLİC', room:'Derslik 111', day:'Salı', hour:'20:00-21:00', classInfo:'Uzaktan Öğretim İşletme Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Dilek DEMİRHAN" data-class="Muhasebe ve Finansman İ.Ö. Tezsiz" data-day="Salı" data-hour="20:00-21:00" data-room="Derslik 208">
+                        <span class="lesson-name">Stratejik Finans Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 208<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Dilek DEMİRHAN</span><br>
+                            <span class="class-badge">Muhasebe ve Finansman İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Stratejik Finans Yönetimi', teacher:'Prof. Dr. Dilek DEMİRHAN', room:'Derslik 208', day:'Salı', hour:'20:00-21:00', classInfo:'Muhasebe ve Finansman İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Keti VENTURA" data-class="Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz" data-day="Salı" data-hour="20:00-21:00" data-room="Derslik 110">
+                        <span class="lesson-name">Endüstriyel Pazarlama</span>
+                        <div class="lesson-info">
+                            📍 Derslik 110<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Keti VENTURA</span><br>
+                            <span class="class-badge">Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Endüstriyel Pazarlama', teacher:'Prof. Dr. Keti VENTURA', room:'Derslik 110', day:'Salı', hour:'20:00-21:00', classInfo:'Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Türker SUSMUŞ" data-class="İşletme İ.Ö. Tezsiz" data-day="Salı" data-hour="20:00-21:00" data-room="Derslik 303">
+                        <span class="lesson-name">Stratejik İşletme Finansı</span>
+                        <div class="lesson-info">
+                            📍 Derslik 303<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Türker SUSMUŞ</span><br>
+                            <span class="class-badge">İşletme İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Stratejik İşletme Finansı', teacher:'Prof. Dr. Türker SUSMUŞ', room:'Derslik 303', day:'Salı', hour:'20:00-21:00', classInfo:'İşletme İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. Aykan CANDEMİR" data-class="Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz" data-day="Çarşamba" data-hour="20:00-21:00" data-room="Derslik 103">
+                        <span class="lesson-name">Hizmet Pazarlaması</span>
+                        <div class="lesson-info">
+                            📍 Derslik 103<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Aykan CANDEMİR</span><br>
+                            <span class="class-badge">Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Hizmet Pazarlaması', teacher:'Prof. Dr. Aykan CANDEMİR', room:'Derslik 103', day:'Çarşamba', hour:'20:00-21:00', classInfo:'Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Burcu ARACIOĞLU" data-class="Uzaktan Öğretim İşletme Tezsiz" data-day="Çarşamba" data-hour="20:00-21:00" data-room="Derslik 211">
+                        <span class="lesson-name">Tedarik Zinciri Yönetimi ve Lojistik</span>
+                        <div class="lesson-info">
+                            📍 Derslik 211<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Burcu ARACIOĞLU</span><br>
+                            <span class="class-badge">Uzaktan Öğretim İşletme Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Tedarik Zinciri Yönetimi ve Lojistik', teacher:'Prof. Dr. Burcu ARACIOĞLU', room:'Derslik 211', day:'Çarşamba', hour:'20:00-21:00', classInfo:'Uzaktan Öğretim İşletme Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Derya İLİC" data-class="İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz" data-day="Çarşamba" data-hour="20:00-21:00" data-room="Derslik 111">
+                        <span class="lesson-name">Örgütler ve Yönetim</span>
+                        <div class="lesson-info">
+                            📍 Derslik 111<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Derya İLİC</span><br>
+                            <span class="class-badge">İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Örgütler ve Yönetim', teacher:'Prof. Dr. Derya İLİC', room:'Derslik 111', day:'Çarşamba', hour:'20:00-21:00', classInfo:'İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Murat KOCAMAZ" data-class="Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz" data-day="Çarşamba" data-hour="20:00-21:00" data-room="Derslik 104">
+                        <span class="lesson-name">Ağ Modelleri</span>
+                        <div class="lesson-info">
+                            📍 Derslik 104<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Murat KOCAMAZ</span><br>
+                            <span class="class-badge">Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Ağ Modelleri', teacher:'Prof. Dr. Murat KOCAMAZ', room:'Derslik 104', day:'Çarşamba', hour:'20:00-21:00', classInfo:'Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ" data-class="İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz" data-day="Perşembe" data-hour="20:00-21:00" data-room="Derslik 108">
+                        <span class="lesson-name">Kurumsal Koçluk ve Mentorluk</span>
+                        <div class="lesson-info">
+                            📍 Derslik 108<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ</span><br>
+                            <span class="class-badge">İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Kurumsal Koçluk ve Mentorluk', teacher:'Prof. Dr. A. Nazlı AYYILDIZ ÜNNÜ', room:'Derslik 108', day:'Perşembe', hour:'20:00-21:00', classInfo:'İnsan Kaynakları Yönetimi ve Yönetim Geliştirme İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Aykan CANDEMİR" data-class="Uzaktan Öğretim İşletme Tezsiz" data-day="Perşembe" data-hour="20:00-21:00" data-room="Derslik 110">
+                        <span class="lesson-name">Hizmet Pazarlaması</span>
+                        <div class="lesson-info">
+                            📍 Derslik 110<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Aykan CANDEMİR</span><br>
+                            <span class="class-badge">Uzaktan Öğretim İşletme Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Hizmet Pazarlaması', teacher:'Prof. Dr. Aykan CANDEMİR', room:'Derslik 110', day:'Perşembe', hour:'20:00-21:00', classInfo:'Uzaktan Öğretim İşletme Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Ayla Özhan DEDEOĞLU" data-class="Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz" data-day="Perşembe" data-hour="20:00-21:00" data-room="Derslik 101">
+                        <span class="lesson-name">Stratejik Pazarlama Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 101<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Ayla Özhan DEDEOĞLU</span><br>
+                            <span class="class-badge">Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Stratejik Pazarlama Yönetimi', teacher:'Prof. Dr. Ayla Özhan DEDEOĞLU', room:'Derslik 101', day:'Perşembe', hour:'20:00-21:00', classInfo:'Pazarlama ve Marka Yönetimi İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Murat KOCAMAZ" data-class="Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz" data-day="Perşembe" data-hour="20:00-21:00" data-room="Derslik 102">
+                        <span class="lesson-name">Veri Odaklı Üretim Planlama Stratejileri</span>
+                        <div class="lesson-info">
+                            📍 Derslik 102<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Murat KOCAMAZ</span><br>
+                            <span class="class-badge">Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Veri Odaklı Üretim Planlama Stratejileri', teacher:'Prof. Dr. Murat KOCAMAZ', room:'Derslik 102', day:'Perşembe', hour:'20:00-21:00', classInfo:'Dijital Teknolojilerle Üretim Yönetimi İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td><td>
+                    <div class="lesson-card" data-teacher="Prof. Dr. Burcu ARACIOĞLU" data-class="Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz" data-day="Cuma" data-hour="20:00-21:00" data-room="Derslik 109">
+                        <span class="lesson-name">Lojistik ve Tedarik Zincirinde Güncel Konular</span>
+                        <div class="lesson-info">
+                            📍 Derslik 109<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Burcu ARACIOĞLU</span><br>
+                            <span class="class-badge">Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Lojistik ve Tedarik Zincirinde Güncel Konular', teacher:'Prof. Dr. Burcu ARACIOĞLU', room:'Derslik 109', day:'Cuma', hour:'20:00-21:00', classInfo:'Uzaktan Öğretim Lojistik Yönetimi İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Murat KOCAMAZ" data-class="İşletme İ.Ö. Tezsiz" data-day="Cuma" data-hour="20:00-21:00" data-room="Derslik 303">
+                        <span class="lesson-name">İşlemler Yönetimi</span>
+                        <div class="lesson-info">
+                            📍 Derslik 303<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Murat KOCAMAZ</span><br>
+                            <span class="class-badge">İşletme İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'İşlemler Yönetimi', teacher:'Prof. Dr. Murat KOCAMAZ', room:'Derslik 303', day:'Cuma', hour:'20:00-21:00', classInfo:'İşletme İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    
+                    <div class="lesson-card" data-teacher="Prof. Dr. Türker SUSMUŞ" data-class="Muhasebe ve Finansman İ.Ö. Tezsiz" data-day="Cuma" data-hour="20:00-21:00" data-room="Derslik 111">
+                        <span class="lesson-name">Finansal Muhasebe</span>
+                        <div class="lesson-info">
+                            📍 Derslik 111<br>
+                            👨‍🏫 <span class="teacher-name">Prof. Dr. Türker SUSMUŞ</span><br>
+                            <span class="class-badge">Muhasebe ve Finansman İ.Ö. Tezsiz</span>
+                        </div>
+                        <button class="btn-single-add" onclick="addSingleToGoogle({title:'Finansal Muhasebe', teacher:'Prof. Dr. Türker SUSMUŞ', room:'Derslik 111', day:'Cuma', hour:'20:00-21:00', classInfo:'Muhasebe ve Finansman İ.Ö. Tezsiz'})">➕ Takvime Ekle</button>
+                    </div>
+                    </td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <script>
+            const gunMap = {'Pazartesi': '20260209', 'Salı': '20260210', 'Çarşamba': '20260211', 'Perşembe': '20260212', 'Cuma': '20260213', 'Cumartesi': '20260214', 'Pazar': '20260215'};
+
+            function filterSchedule() {
+                const t = document.getElementById("teacherSelect").value;
+                const c = document.getElementById("classSelect").value;
+                document.querySelectorAll(".lesson-card").forEach(card => {
+                    const tM = (t === "all" || card.getAttribute("data-teacher") === t);
+                    const cM = (c === "all" || card.getAttribute("data-class") === c);
+                    card.style.display = (tM && cM) ? "block" : "none";
+                });
+            }
+
+            function addSingleToGoogle(d) {
+                let h = d.hour.split('-')[0].trim().replace(":","");
+                if(h.length === 3) h = "0" + h;
+                const start = gunMap[d.day] + "T" + h + "00";
+                const end = gunMap[d.day] + "T" + (parseInt(h.substring(0,2))+1) + h.substring(2) + "00";
+                const fullTitle = d.title + " [" + d.classInfo + "]";
+                const details = "Hoca: " + d.teacher + "\nSınıf: " + d.classInfo;
+                const url = `https://www.google.com/calendar/render?action=TEMPLATE&text=${encodeURIComponent(fullTitle)}&details=${encodeURIComponent(details)}&location=${encodeURIComponent(d.room)}&dates=${start}/${end}&recur=RRULE:FREQ=WEEKLY;UNTIL=20260615T235959Z`;
+                window.open(url, '_blank');
+            }
+
+            function downloadICS() {
+                const tv = document.getElementById("teacherSelect").value;
+                const cv = document.getElementById("classSelect").value;
+                if (tv === "all" && cv === "all") {
+                    alert("⚠️ Lütfen önce bir Öğretim Elemanı veya Sınıf seçerek filtreleme yapın.");
+                    return;
+                }
+                const visible = Array.from(document.querySelectorAll(".lesson-card")).filter(c => c.style.display !== "none");
+                let ics = "BEGIN:VCALENDAR\nVERSION:2.0\nPRODID:-//Ege//TR\nCALSCALE:GREGORIAN\nMETHOD:PUBLISH\n";
+                visible.forEach(card => {
+                    const title = card.querySelector(".lesson-name").innerText;
+                    const hoca = card.getAttribute("data-teacher");
+                    const classInfo = card.getAttribute("data-class");
+                    const room = card.getAttribute("data-room");
+                    const day = card.getAttribute("data-day");
+                    let h = card.getAttribute("data-hour").split('-')[0].trim().replace(":","");
+                    if(h.length === 3) h = "0" + h;
+                    ics += "BEGIN:VEVENT\n";
+                    ics += `SUMMARY:${title} [${classInfo}]\n`;
+                    ics += `LOCATION:${room}\n`;
+                    ics += `DESCRIPTION:Hoca: ${hoca}\nSınıf: ${classInfo}\n`;
+                    ics += `DTSTART:${gunMap[day]}T${h}00\n`;
+                    ics += `DTEND:${gunMap[day]}T${parseInt(h.substring(0,2))+1}${h.substring(2)}00\n`;
+                    ics += `RRULE:FREQ=WEEKLY;UNTIL=20260615T235959Z\n`;
+                    ics += "END:VEVENT\n";
+                });
+                ics += "END:VCALENDAR";
+                const blob = new Blob([ics], { type: 'text/calendar;charset=utf-8' });
+                const a = document.createElement("a");
+                a.href = window.URL.createObjectURL(blob);
+                a.download = "ders_programi.ics";
+                a.click();
+            }
+        </script>
+        </body>
+        </html>
+        

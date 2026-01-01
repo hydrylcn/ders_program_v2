@@ -223,10 +223,19 @@ class App(ctk.CTk):
             # Algoritmayı başlat
             if ders.arayuzden_baslat(self.ayarlar):
                 out_name = os.path.basename(self.ayarlar["OUTPUT_FILE"])
-                html.rapor_olustur(out_name)
-                htmlxv2.rapor_olustur_v2(out_name)
-                # Çıktıların taşınma işlemi kaldırıldı. Dosyalar ana dizinde kalacak.
-                print(f"\n✅ İŞLEM TAMAM: Çıktılar aynı dizine kaydedildi.")
+                exam_name = "isletme_sinav_takvimi.xlsx"
+
+                # 1. Takvim Formatlı HTML Raporları (html.py)
+                html.rapor_olustur(out_name, "ders_programi_takvim.html", "📅 Haftalık Ders Programı", "#1a73e8")
+                html.rapor_olustur(exam_name, "sinav_takvimi_takvim.html", "✍️ Dönem Sonu Sınav Takvimi", "#d32f2f")
+
+                # 2. Liste/Tablo Formatlı HTML Raporları (htmlxv2.py)
+                htmlxv2.rapor_olustur_v2(out_name, "ders_programi_tablo.html",
+                                         "📅 İktisadi İdari Bilimler Ders Programı", "#1a73e8")
+                htmlxv2.rapor_olustur_v2(exam_name, "sinav_takvimi_tablo.html",
+                                         "✍️ İktisadi İdari Bilimler Sınav Takvimi", "#d32f2f")
+
+                print(f"\n✅ İŞLEM TAMAM: Tüm Excel ve HTML çıktıları (Ders + Sınav) oluşturuldu.")
             else:
                 print("\n⚠️ Çözüm bulunamadı.")
         except Exception as e:
