@@ -1,3 +1,4 @@
+# -*- coding: utf-8 -*-
 import customtkinter as ctk
 from tkinter import filedialog, messagebox
 import sys
@@ -29,7 +30,18 @@ class App(ctk.CTk):
         super().__init__()
         ctk.set_appearance_mode("light")
         self.title("Ders Programı Planlama Paneli")
-        self.geometry("900x950")
+        width, height = 900, 1000
+
+        # Ekran boyutu
+        screen_w = self.winfo_screenwidth()
+        screen_h = self.winfo_screenheight()
+
+        # Ortalanmış konum
+        x = (screen_w - width) // 2
+        y = (screen_h - height) // 2
+
+        # Geometry ayarı
+        self.geometry(f"{width}x{height}+{x}+{y}")
         self.configure(fg_color="white")
 
         self.log_queue = queue.Queue()
@@ -77,6 +89,7 @@ class App(ctk.CTk):
 
         self.add_constraint_row("Tezsiz", "ONLY", is_inverse=False)
         self.add_constraint_row("Tezsiz", "NEVER", is_inverse=True)
+        self.add_constraint_row("Seçmeli", "ONLY", is_inverse=False)
 
     def add_section(self, text):
         ctk.CTkLabel(self.scroll_frame, text=text, font=("Arial", 14, "bold"), text_color="#34495e").pack(anchor="w",
@@ -117,8 +130,25 @@ class App(ctk.CTk):
         top_line = ctk.CTkFrame(row_frame, fg_color="transparent")
         top_line.pack(fill="x", padx=10, pady=5)
 
-        keyword = ctk.CTkEntry(top_line, placeholder_text="Grup Adı", width=180)
+        # Grup Seçim Menüsü
+        options = ["Tezsiz", "Tezli", "Doktora", "1. Sınıf", "2. Sınıf", "3. Sınıf", "4. Sınıf", "Seçmeli", "Zorunlu", "Özel..."]
+
+        keyword = ctk.CTkEntry(top_line, placeholder_text="Grup Adı", width=150)
         keyword.insert(0, key)
+
+        def on_dropdown_change(choice):
+            if choice == "Özel...":
+                keyword.delete(0, "end")
+                keyword.focus()
+            else:
+                keyword.delete(0, "end")
+                keyword.insert(0, choice)
+
+        menu_val = key if key in options else "Özel..."
+        group_menu = ctk.CTkOptionMenu(top_line, values=options, command=on_dropdown_change, width=120)
+        group_menu.set(menu_val)
+        group_menu.pack(side="left", padx=5)
+
         keyword.pack(side="left", padx=5)
 
         inverse_var = ctk.BooleanVar(value=is_inverse)
@@ -193,7 +223,6 @@ class App(ctk.CTk):
                     "slots": [s for s, v in row["slot_vars"].items() if v.get()]
                 }
 
-        # EXE dışındaki konum
         base_dir = os.path.dirname(sys.executable) if getattr(sys, 'frozen', False) else os.getcwd()
         db_path = os.path.join(base_dir, "okul.db")
 
@@ -220,16 +249,13 @@ class App(ctk.CTk):
             if os.path.exists(excel_yolu):
                 db.veritabanini_guncelle(excel_yolu)
 
-            # Algoritmayı başlat
             if ders.arayuzden_baslat(self.ayarlar):
                 out_name = os.path.basename(self.ayarlar["OUTPUT_FILE"])
                 exam_name = "isletme_sinav_takvimi.xlsx"
 
-                # 1. Takvim Formatlı HTML Raporları (html.py)
                 html.rapor_olustur(out_name, "ders_programi_takvim.html", "📅 Haftalık Ders Programı", "#1a73e8")
                 html.rapor_olustur(exam_name, "sinav_takvimi_takvim.html", "✍️ Dönem Sonu Sınav Takvimi", "#d32f2f")
 
-                # 2. Liste/Tablo Formatlı HTML Raporları (htmlxv2.py)
                 htmlxv2.rapor_olustur_v2(out_name, "ders_programi_tablo.html",
                                          "📅 İktisadi İdari Bilimler Ders Programı", "#1a73e8")
                 htmlxv2.rapor_olustur_v2(exam_name, "sinav_takvimi_tablo.html",

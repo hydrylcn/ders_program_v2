@@ -51,15 +51,23 @@ class Scheduler:
 
     def is_valid(self, assignment, day, slot, classroom_name):
         if time.time() - self.start_time > self.TRIAL_TIMEOUT: return False
+
+        # --- DEĞİŞİKLİK: Sınıf ve Durum alanlarını birleştirerek kontrol et ---
         sinif_adi = str(assignment.get('sinif', ""))
+        durum_bilgisi = str(assignment.get('durum', ""))
+        arama_metni = (sinif_adi + " " + durum_bilgisi).upper()
+
         for keyword, rules in self.SPECIAL_CONSTRAINTS.items():
-            is_match = (keyword[1:] not in sinif_adi) if keyword.startswith("!") else (keyword in sinif_adi)
+            clean_keyword = keyword[1:].upper() if keyword.startswith("!") else keyword.upper()
+            is_match = (clean_keyword not in arama_metni) if keyword.startswith("!") else (clean_keyword in arama_metni)
+
             if is_match:
                 ctype = rules.get("type", "ONLY")
                 if ctype == "ONLY":
                     if day not in rules['days'] or slot not in rules['slots']: return False
                 elif ctype == "NEVER":
                     if day in rules['days'] and slot in rules['slots']: return False
+
         hoca_adi = assignment.get('isim', "").strip()
         if self.constraints.get((hoca_adi, day, slot)) == 0: return False
         current_slot_idx = self.SLOTS.index(slot)
@@ -81,13 +89,21 @@ class Scheduler:
         if any(d.get('ders_id') == assignment['ders_id'] and d.get('sinif') == assignment['sinif'] for d in
                self.initial_prefs):
             return self.backtrack(index + 1)
+
+        # --- DEĞİŞİKLİK: Sınıf ve Durum alanlarını birleştirerek kontrol et ---
         sinif_adi = str(assignment.get('sinif', ""))
+        durum_bilgisi = str(assignment.get('durum', ""))
+        arama_metni = (sinif_adi + " " + durum_bilgisi).upper()
+
         potential_slots = []
         for d in self.DAYS:
             for s in self.SLOTS:
                 skip_slot = False
                 for keyword, rules in self.SPECIAL_CONSTRAINTS.items():
-                    is_match = (keyword[1:] not in sinif_adi) if keyword.startswith("!") else (keyword in sinif_adi)
+                    clean_keyword = keyword[1:].upper() if keyword.startswith("!") else keyword.upper()
+                    is_match = (clean_keyword not in arama_metni) if keyword.startswith("!") else (
+                                clean_keyword in arama_metni)
+
                     if is_match:
                         if rules.get("type") == "ONLY" and (d not in rules['days'] or s not in rules['slots']):
                             skip_slot = True;
@@ -131,15 +147,20 @@ class Scheduler:
 
 def get_data(db_path):
     conn = sqlite3.connect(db_path)
-    query = "SELECT oud.uye_id, ou.isim, oud.ders_id, d.ders_adi, oud.sinif, oud.kontenjan FROM OgretimUyeleriDersler oud JOIN OgretimUyeleri ou ON oud.uye_id = ou.uye_id JOIN Dersler d ON oud.ders_id = d.ders_id"
+    # Sorguya oud.durum eklendi
+    query = """
+        SELECT oud.uye_id, ou.isim, oud.ders_id, d.ders_adi, oud.sinif, oud.kontenjan, oud.durum 
+        FROM OgretimUyeleriDersler oud 
+        JOIN OgretimUyeleri ou ON oud.uye_id = ou.uye_id 
+        JOIN Dersler d ON oud.ders_id = d.ders_id
+    """
     raw = pd.read_sql_query(query, conn).to_dict('records')
+
     final = []
     for r in raw:
         if not r['sinif']: continue
-        for c in [s.strip() for s in str(r['sinif']).split(',') if s.strip()]:
-            new_r = r.copy();
-            new_r['sinif'] = c;
-            final.append(new_r)
+        final.append(r)
+
     rooms = pd.read_sql_query("SELECT derslik_adi, kontenjan FROM Derslikler", conn).to_dict('records')
     conn.close()
     return final, rooms
@@ -188,14 +209,12 @@ def save_to_master_excel(schedule_data, score, output_file, days, slots):
     df = pd.DataFrame(schedule_data)
     master_df = pd.DataFrame(index=days, columns=slots).fillna("")
     for (day, slot), group in df.groupby(['day', 'slot']):
-        lines = [f"{r['classroom']}: {r['ders_adi']} [{r['sinif']}] - {r['isim']}" for _, r in group.iterrows()]
+        lines = [f"{r['classroom']}: {r['ders_adi']} [{r['sinif']}] \"{r.get('durum', '')}\" - {r['isim']}" for _, r in group.iterrows()]
         master_df.at[day, slot] = "\n".join(lines)
     with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
         master_df.to_excel(writer, sheet_name='Genel Ders Programı')
         pd.DataFrame({"Kriter": ["Final Skor"], "Değer": [score]}).to_excel(writer, sheet_name='Rapor')
 
-
-# --- SINAV TAKVİMİ (HATA DÜZELTİLDİ) ---
 
 def save_exam_schedule(schedule_data, output_file, classrooms, days, slots):
     sub_slots_map = {"09:00-12:00": ["09:00-10:30", "10:30-12:00"], "13:00-16:00": ["13:00-14:30", "14:30-16:00"],
@@ -227,14 +246,12 @@ def save_exam_schedule(schedule_data, output_file, classrooms, days, slots):
 
             for row in sub_group:
                 remaining_students = row['kontenjan']
-                # DÜZELTME: Dersin TOPLAM kontenjanı 50'den büyükse, TÜM atamalar için sadece büyük sınıfları kullan.
                 is_large_course = (row['kontenjan'] > 50)
                 assigned_rooms = []
 
                 available_rooms = exam_rooms_base.copy()
                 random.shuffle(available_rooms)
 
-                # Eğer ders bölünecekse, küçük sınıfları (Derslik 303 gibi) seçim listesinden kalıcı olarak çıkar.
                 if is_large_course:
                     available_rooms = [r for r in available_rooms if r['original_cap'] >= 50]
 
@@ -246,7 +263,7 @@ def save_exam_schedule(schedule_data, output_file, classrooms, days, slots):
                         if remaining_students <= 0: break
 
                 rooms_str = " + ".join(assigned_rooms) if assigned_rooms else "Uygun Büyük Derslik Yok"
-                slot_entries.append(f"{rooms_str}: {row['ders_adi']} [{row['sinif']}] - {row['isim']}")
+                slot_entries.append(f"{rooms_str}: {row['ders_adi']} [{row['sinif']}] \"{row.get('durum', '')}\" - {row['isim']}")
             exam_df.at[day, current_sub_slot] = "\n".join(slot_entries)
 
     with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
