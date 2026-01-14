@@ -260,6 +260,14 @@ class App(ctk.CTk):
                 out_name = os.path.basename(self.ayarlar["OUTPUT_FILE"])
                 exam_name = "isletme_sinav_takvimi.xlsx"
 
+                # --- YENİ EKLENEN KISIM: excel.py çağrısı ---
+                import excel
+                # Ders programı için hem liste hem takvim içeren Excel oluştur
+                excel.tam_program_raporu(out_name, "ders_programi_tam_rapor.xlsx")
+                # Sınav takvimi için hem liste hem takvim içeren Excel oluştur
+                excel.tam_program_raporu(exam_name, "sinav_takvimi_tam_rapor.xlsx")
+                # --------------------------------------------
+
                 html.rapor_olustur(out_name, "ders_programi_takvim.html", "📅 Haftalık Ders Programı", "#1a73e8")
                 html.rapor_olustur(exam_name, "sinav_takvimi_takvim.html", "✍️ Dönem Sonu Sınav Takvimi", "#d32f2f")
 
