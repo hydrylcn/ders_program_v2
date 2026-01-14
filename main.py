@@ -13,6 +13,17 @@ import ders
 import html
 import htmlxv2
 
+# Grupların varsayılan gün ve saat ayarları
+DEFAULT_PRESETS = {
+    "Tezsiz": {
+        "days": ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma"],
+        "slots": ["19:00-21:00"]
+    },
+    "Seçmeli": {
+        "days": ["Çarşamba"],
+        "slots": ["09:00-12:00", "13:00-16:00", "16:00-19:00", "19:00-21:00"]
+    }
+}
 
 class ConsoleRedirector:
     def __init__(self, log_queue):
@@ -32,15 +43,12 @@ class App(ctk.CTk):
         self.title("Ders Programı Planlama Paneli")
         width, height = 900, 1000
 
-        # Ekran boyutu
         screen_w = self.winfo_screenwidth()
         screen_h = self.winfo_screenheight()
 
-        # Ortalanmış konum
         x = (screen_w - width) // 2
         y = (screen_h - height) // 2
 
-        # Geometry ayarı
         self.geometry(f"{width}x{height}+{x}+{y}")
         self.configure(fg_color="white")
 
@@ -87,6 +95,7 @@ class App(ctk.CTk):
         ctk.CTkButton(self.scroll_frame, text="+ Yeni Kısıt Ekle", command=self.add_constraint_row,
                       fg_color="#3498db", hover_color="#2980b9").pack(pady=10)
 
+        # BURASI: Toplam 3 adet default ayar
         self.add_constraint_row("Tezsiz", "ONLY", is_inverse=False)
         self.add_constraint_row("Tezsiz", "NEVER", is_inverse=True)
         self.add_constraint_row("Seçmeli", "ONLY", is_inverse=False)
@@ -130,7 +139,6 @@ class App(ctk.CTk):
         top_line = ctk.CTkFrame(row_frame, fg_color="transparent")
         top_line.pack(fill="x", padx=10, pady=5)
 
-        # Grup Seçim Menüsü
         options = ["Tezsiz", "Tezli", "Doktora", "1. Sınıf", "2. Sınıf", "3. Sınıf", "4. Sınıf", "Seçmeli", "Zorunlu", "Özel..."]
 
         keyword = ctk.CTkEntry(top_line, placeholder_text="Grup Adı", width=150)
@@ -162,11 +170,14 @@ class App(ctk.CTk):
         ctk.CTkButton(top_line, text="Sil", width=50, fg_color="#e74c3c",
                       command=lambda f=row_frame: self.remove_row(f)).pack(side="right")
 
+        preset = DEFAULT_PRESETS.get(key, {})
+
         days_frame = ctk.CTkFrame(row_frame, fg_color="#f9f9f9")
         days_frame.pack(fill="x", padx=10, pady=2)
         day_vars = {}
         for day in self.ALL_DAYS:
-            v = ctk.BooleanVar(value=True)
+            is_day_sel = (day in preset["days"]) if "days" in preset else True
+            v = ctk.BooleanVar(value=is_day_sel)
             ctk.CTkCheckBox(days_frame, text=day, variable=v).pack(side="left", padx=8)
             day_vars[day] = v
 
@@ -174,12 +185,8 @@ class App(ctk.CTk):
         slots_frame.pack(fill="x", padx=10, pady=2)
         slot_vars = {}
         for slot in self.ALL_SLOTS:
-            if key == "Tezsiz":
-                is_sel = (slot == "19:00-21:00")
-            else:
-                is_sel = True
-
-            v = ctk.BooleanVar(value=is_sel)
+            is_slot_sel = (slot in preset["slots"]) if "slots" in preset else True
+            v = ctk.BooleanVar(value=is_slot_sel)
             ctk.CTkCheckBox(slots_frame, text=slot, variable=v).pack(side="left", padx=8)
             slot_vars[slot] = v
 

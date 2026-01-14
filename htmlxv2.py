@@ -113,7 +113,7 @@ def rapor_olustur_v2(file_path='isletme_ders_programi.xlsx', output_name="ders_p
             <h1>{baslik}</h1>
             <div class="filters">
                 <div class="filter-group"><label>Gün Seçin:</label><select id="daySelect" onchange="filterTable()"><option value="all">Tüm Günler</option>{''.join([f'<option value="{d}">{d}</option>' for d in existing_days])}</select></div>
-                <div class="filter-group"><label>Öğretim Elemanı Seçin:</label><select id="teacherSelect" onchange="filterTable()"><option value="all">Tüm Hocalar</option>{''.join([f'<option value="{h}">{h}</option>' for h in all_teachers])}</select></div>
+                <div class="filter-group"><label>Öğretim Üyesi Seçin:</label><select id="teacherSelect" onchange="filterTable()"><option value="all">Tüm Öğretim Üyeleri</option>{''.join([f'<option value="{h}">{h}</option>' for h in all_teachers])}</select></div>
                 <div class="filter-group"><label>Sınıf / Grup Seçin:</label><select id="classSelect" onchange="filterTable()"><option value="all">Tüm Sınıflar</option>{''.join([f'<option value="{c}">{c}</option>' for c in all_classes])}</select></div>
                 <div class="filter-group"><label>Durum Seçin:</label><select id="statusSelect" onchange="filterTable()"><option value="all">Tüm Durumlar</option>{''.join([f'<option value="{s}">{s}</option>' for s in all_status])}</select></div>
             </div>

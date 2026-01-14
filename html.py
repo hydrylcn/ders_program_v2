@@ -120,7 +120,7 @@ def rapor_olustur(file_path='isletme_ders_programi.xlsx', output_name="ders_prog
         <div class="container">
             <h1>{baslik}</h1>
             <div class="filters">
-                <div class="filter-group"><label>Öğretim Elemanı:</label><select id="teacherSelect" onchange="filterSchedule()"><option value="all">Tüm Hocalar</option>{"".join([f'<option value="{h}">{h}</option>' for h in all_teachers])}</select></div>
+                <div class="filter-group"><label>Öğretim Üyesi:</label><select id="teacherSelect" onchange="filterSchedule()"><option value="all">Tüm Öğretim Üyeleri</option>{"".join([f'<option value="{h}">{h}</option>' for h in all_teachers])}</select></div>
                 <div class="filter-group"><label>Sınıf / Grup:</label><select id="classSelect" onchange="filterSchedule()"><option value="all">Tüm Sınıflar</option>{"".join([f'<option value="{c}">{c}</option>' for c in all_classes])}</select></div>
                 <div class="filter-group"><label>Durum:</label><select id="statusSelect" onchange="filterSchedule()"><option value="all">Tüm Durumlar</option>{"".join([f'<option value="{s}">{s}</option>' for s in all_status])}</select></div>
                 <div class="filter-group"><label>&nbsp;</label><button class="btn-export" onclick="downloadICS()">📥 Seçili Programı İndir (.ics)</button></div>
