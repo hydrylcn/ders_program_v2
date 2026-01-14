@@ -52,7 +52,6 @@ class Scheduler:
     def is_valid(self, assignment, day, slot, classroom_name):
         if time.time() - self.start_time > self.TRIAL_TIMEOUT: return False
 
-        # --- DEĞİŞİKLİK: Sınıf ve Durum alanlarını birleştirerek kontrol et ---
         sinif_adi = str(assignment.get('sinif', ""))
         durum_bilgisi = str(assignment.get('durum', ""))
         arama_metni = (sinif_adi + " " + durum_bilgisi).upper()
@@ -77,7 +76,8 @@ class Scheduler:
         class_count_in_slot = 0
         for entry in self.schedule:
             if entry['day'] == day and entry['slot'] == slot:
-                if entry['uye_id'] == assignment['uye_id']: return False
+                # uye_id yerine isim kontrolü yapılıyor
+                if entry['isim'] == assignment['isim']: return False
                 if entry['classroom'] == classroom_name: return False
                 if entry.get('sinif') == assignment.get('sinif'): class_count_in_slot += 1
         return class_count_in_slot < self.class_limits.get(assignment.get('sinif'), 1)
@@ -86,11 +86,11 @@ class Scheduler:
         if time.time() - self.start_time > self.TRIAL_TIMEOUT: return False
         if index == len(self.assignments): return True
         assignment = self.assignments[index]
-        if any(d.get('ders_id') == assignment['ders_id'] and d.get('sinif') == assignment['sinif'] for d in
+
+        if any(d.get('ders_adi') == assignment.get('ders_adi') and d.get('sinif') == assignment['sinif'] for d in
                self.initial_prefs):
             return self.backtrack(index + 1)
 
-        # --- DEĞİŞİKLİK: Sınıf ve Durum alanlarını birleştirerek kontrol et ---
         sinif_adi = str(assignment.get('sinif', ""))
         durum_bilgisi = str(assignment.get('durum', ""))
         arama_metni = (sinif_adi + " " + durum_bilgisi).upper()
@@ -118,6 +118,7 @@ class Scheduler:
                 global_load = sum(1 for e in self.schedule if e['day'] == d and e['slot'] == s)
                 if class_load < self.class_limits.get(assignment.get('sinif'), 1):
                     potential_slots.append((d, s, class_load, not hoca_o_gun_orada, global_load))
+
         random.shuffle(potential_slots)
         potential_slots.sort(key=lambda x: (x[2], x[3], x[4]))
         uygun_derslikler = [r for r in self.classrooms if r['kontenjan'] >= assignment.get('kontenjan', 0)]
@@ -147,20 +148,10 @@ class Scheduler:
 
 def get_data(db_path):
     conn = sqlite3.connect(db_path)
-    # Sorguya oud.durum eklendi
-    query = """
-        SELECT oud.uye_id, ou.isim, oud.ders_id, d.ders_adi, oud.sinif, oud.kontenjan, oud.durum 
-        FROM OgretimUyeleriDersler oud 
-        JOIN OgretimUyeleri ou ON oud.uye_id = ou.uye_id 
-        JOIN Dersler d ON oud.ders_id = d.ders_id
-    """
+    # JOIN kaldırıldı, veriler doğrudan tek tablodan çekiliyor
+    query = "SELECT isim, ders_adi, sinif, kontenjan, durum FROM OgretimUyeleriDersler"
     raw = pd.read_sql_query(query, conn).to_dict('records')
-
-    final = []
-    for r in raw:
-        if not r['sinif']: continue
-        final.append(r)
-
+    final = [r for r in raw if r['sinif']]
     rooms = pd.read_sql_query("SELECT derslik_adi, kontenjan FROM Derslikler", conn).to_dict('records')
     conn.close()
     return final, rooms
@@ -209,7 +200,8 @@ def save_to_master_excel(schedule_data, score, output_file, days, slots):
     df = pd.DataFrame(schedule_data)
     master_df = pd.DataFrame(index=days, columns=slots).fillna("")
     for (day, slot), group in df.groupby(['day', 'slot']):
-        lines = [f"{r['classroom']}: {r['ders_adi']} [{r['sinif']}] \"{r.get('durum', '')}\" - {r['isim']}" for _, r in group.iterrows()]
+        lines = [f"{r['classroom']}: {r['ders_adi']} [{r['sinif']}] \"{r.get('durum', '')}\" - {r['isim']}" for _, r in
+                 group.iterrows()]
         master_df.at[day, slot] = "\n".join(lines)
     with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
         master_df.to_excel(writer, sheet_name='Genel Ders Programı')
@@ -221,51 +213,40 @@ def save_exam_schedule(schedule_data, output_file, classrooms, days, slots):
                      "16:00-19:00": ["16:00-17:30", "17:30-19:00"], "19:00-21:00": ["19:00-20:00", "20:00-21:00"]}
     all_exam_slots = []
     for s in slots: all_exam_slots.extend(sub_slots_map.get(s, [s]))
-
     exam_rooms_base = []
     for r in classrooms:
         new_room = r.copy()
         new_room['original_cap'] = r['kontenjan']
         if new_room['kontenjan'] > 50: new_room['kontenjan'] = 50
         exam_rooms_base.append(new_room)
-
     df = pd.DataFrame(schedule_data)
     exam_df = pd.DataFrame(index=days, columns=all_exam_slots).fillna("")
-
     for (day, slot), group in df.groupby(['day', 'slot']):
         sub_slots = sub_slots_map.get(slot, [slot])
         group_list = group.to_dict('records')
         mid = (len(group_list) + 1) // 2
         halves = [group_list[:mid], group_list[mid:]]
-
         for i, sub_group in enumerate(halves):
             if i >= len(sub_slots): break
             current_sub_slot = sub_slots[i]
             slot_entries = []
             used_rooms_in_slot = set()
-
             for row in sub_group:
                 remaining_students = row['kontenjan']
-                is_large_course = (row['kontenjan'] > 50)
                 assigned_rooms = []
-
                 available_rooms = exam_rooms_base.copy()
                 random.shuffle(available_rooms)
-
-                if is_large_course:
-                    available_rooms = [r for r in available_rooms if r['original_cap'] >= 50]
-
+                if row['kontenjan'] > 50: available_rooms = [r for r in available_rooms if r['original_cap'] >= 50]
                 for room in available_rooms:
                     if room['derslik_adi'] not in used_rooms_in_slot:
                         assigned_rooms.append(room['derslik_adi'])
                         used_rooms_in_slot.add(room['derslik_adi'])
                         remaining_students -= room['kontenjan']
                         if remaining_students <= 0: break
-
                 rooms_str = " + ".join(assigned_rooms) if assigned_rooms else "Uygun Büyük Derslik Yok"
-                slot_entries.append(f"{rooms_str}: {row['ders_adi']} [{row['sinif']}] \"{row.get('durum', '')}\" - {row['isim']}")
+                slot_entries.append(
+                    f"{rooms_str}: {row['ders_adi']} [{row['sinif']}] \"{row.get('durum', '')}\" - {row['isim']}")
             exam_df.at[day, current_sub_slot] = "\n".join(slot_entries)
-
     with pd.ExcelWriter(output_file, engine='xlsxwriter') as writer:
         exam_df.to_excel(writer, sheet_name='Sınav Takvimi')
 
