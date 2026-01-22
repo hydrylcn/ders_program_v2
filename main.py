@@ -72,13 +72,13 @@ class App(ctk.CTk):
         self.dersler_excel_ent = self.add_file_input("Dersler Excel:", "dersler.xlsx")
         self.pref_file_ent = self.add_file_input("Tercih Excel:", "tercih.xlsx")
         self.constr_file_ent = self.add_file_input("Kısıt Excel:", "kisit_formu.xlsx")
-        self.output_file_ent = self.add_input("Çıktı Excel Adı:", "isletme_ders_programi.xlsx")
+        self.output_file_ent = self.add_input("Çıktı Excel Adı:", "ders_programi.xlsx")
 
         self.add_section("2. ALGORİTMA AYARLARI")
         top_settings = ctk.CTkFrame(self.scroll_frame, fg_color="transparent")
         top_settings.pack(fill="x")
         self.max_trials_ent = self.add_input("Max Deneme:", "30", master=top_settings, side="left")
-        self.timeout_ent = self.add_input("Zaman Aşımı (sn):", "30", master=top_settings, side="left")
+        self.timeout_ent = self.add_input("Zaman Aşımı (sn):", "10", master=top_settings, side="left")
 
         self.max_days_ent = self.add_input("Dersler kaç güne toplansın?:", "3")
         self.min_gap_ent = self.add_input("Ders aralarında boşluk (0,1,2):", "1")
@@ -187,7 +187,7 @@ class App(ctk.CTk):
 
         def update_description(*args):
             grup = keyword_ent.get().strip() or "Belirtilmemiş Grup"
-            disinda = " dışında tüm dersler" if inverse_var.get() else ""
+            disinda = " DIŞINDAKİ tüm dersler" if inverse_var.get() else ""
             tip = ctype_menu.get()
 
             # 1. Adım: Her gün için seçili olan saatleri tuple olarak topla
