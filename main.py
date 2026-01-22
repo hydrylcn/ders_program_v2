@@ -278,7 +278,7 @@ class App(ctk.CTk):
                                          "📅 İktisadi İdari Bilimler Ders Programı", "#1a73e8")
                 htmlxv2.rapor_olustur_v2(exam_name, "sinav_takvimi_tablo.html",
                                          "✍️ İktisadi İdari Bilimler Sınav Takvimi", "#d32f2f")
-                print(f"\n✅ İŞLEM TAMAM: Seçili matris hücrelerine göre program hazırlandı.")
+                print(f"\n✅ İŞLEM TAMAM: Seçimlere göre program hazırlandı.")
             else:
                 print("\n⚠️ Çözüm bulunamadı.")
         except Exception as e:
