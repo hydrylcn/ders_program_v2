@@ -268,16 +268,16 @@ class App(ctk.CTk):
             if os.path.exists(excel_yolu): db.veritabanini_guncelle(excel_yolu)
             if ders.arayuzden_baslat(self.ayarlar):
                 out_name = os.path.basename(self.ayarlar["OUTPUT_FILE"])
-                exam_name = "isletme_sinav_takvimi.xlsx"
+                exam_name = "sinav_takvimi.xlsx"
                 import excel
                 excel.tam_program_raporu(out_name, "ders_programi_tam_rapor.xlsx")
                 excel.tam_program_raporu(exam_name, "sinav_takvimi_tam_rapor.xlsx")
                 html.rapor_olustur(out_name, "ders_programi_takvim.html", "📅 Haftalık Ders Programı", "#1a73e8")
                 html.rapor_olustur(exam_name, "sinav_takvimi_takvim.html", "✍️ Dönem Sonu Sınav Takvimi", "#d32f2f")
                 htmlxv2.rapor_olustur_v2(out_name, "ders_programi_tablo.html",
-                                         "📅 İktisadi İdari Bilimler Ders Programı", "#1a73e8")
+                                         "📅 Ders Programı", "#1a73e8")
                 htmlxv2.rapor_olustur_v2(exam_name, "sinav_takvimi_tablo.html",
-                                         "✍️ İktisadi İdari Bilimler Sınav Takvimi", "#d32f2f")
+                                         "✍️ Sınav Takvimi", "#d32f2f")
                 print(f"\n✅ İŞLEM TAMAM: Seçimlere göre program hazırlandı.")
             else:
                 print("\n⚠️ Çözüm bulunamadı.")
