@@ -13,7 +13,7 @@ import ders
 import html
 import htmlxv2
 
-# Grupların varsayılan gün ve saat ayarları (3. Sınıf için özel matris tanımı)
+# Grupların varsayılan gün ve saat ayarları
 DEFAULT_PRESETS = {
     "Tezsiz": {
         "days": ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma"],
@@ -90,17 +90,14 @@ class App(ctk.CTk):
         ctk.CTkButton(self.scroll_frame, text="+ Yeni Kısıt Ekle", command=self.add_constraint_row,
                       fg_color="#3498db", hover_color="#2980b9").pack(pady=10)
 
-        # --- GÜNCELLENMİŞ DEFAULT KISITLAR ---
         self.add_constraint_row("Tezsiz", "SADECE")
         self.add_constraint_row("Tezsiz", "ASLA", is_inverse=True)
 
-        # 3. Sınıf Kısıtı: Sadece SADECE, Çarşamba 13-16 hariç tüm gündüz saatleri seçili
         s3_pairs = []
         for d in self.ALL_DAYS:
             s3_pairs.append([d, "09:00-12:00"])
-            if d != "Çarşamba":  # Çarşamba günü 13:00-16:00 eklenmiyor
+            if d != "Çarşamba":
                 s3_pairs.append([d, "13:00-16:00"])
-
         self.add_constraint_row("3. Sınıf", "SADECE", initial_pairs=s3_pairs)
 
     def add_section(self, text):
@@ -151,18 +148,20 @@ class App(ctk.CTk):
         group_menu = ctk.CTkOptionMenu(top_line, values=options, command=lambda c: (keyword_ent.delete(0, "end"),
                                                                                     keyword_ent.insert(0,
                                                                                                        c if c != "Özel..." else ""),
-                                                                                    keyword_ent.focus() if c == "Özel..." else None),
+                                                                                    keyword_ent.focus() if c == "Özel..." else None,
+                                                                                    update_description()),
                                        width=120)
-        group_menu.set(menu_val);
+        group_menu.set(menu_val)
         group_menu.pack(side="left", padx=5)
         keyword_ent.pack(side="left", padx=5)
 
         inverse_var = ctk.BooleanVar(value=is_inverse)
-        ctk.CTkCheckBox(top_line, text="DIŞINDA", variable=inverse_var, width=40, font=("Arial", 12, "bold")).pack(
-            side="left", padx=5)
+        cb_inverse = ctk.CTkCheckBox(top_line, text="DIŞINDA", variable=inverse_var, width=40,
+                                     font=("Arial", 12, "bold"), command=lambda: update_description())
+        cb_inverse.pack(side="left", padx=5)
 
         ctype_menu = ctk.CTkOptionMenu(top_line, values=["SADECE", "ASLA"], width=100)
-        ctype_menu.set(t);
+        ctype_menu.set(t)
         ctype_menu.pack(side="left", padx=5)
 
         ctk.CTkButton(top_line, text="Sil", width=50, fg_color="#e74c3c",
@@ -170,6 +169,12 @@ class App(ctk.CTk):
 
         grid_container = ctk.CTkFrame(row_frame, fg_color="#f9f9f9", corner_radius=5)
         grid_container.pack(fill="x", padx=10, pady=5)
+
+        guidance_frame = ctk.CTkFrame(row_frame, fg_color="#ebf5fb", corner_radius=5)
+        guidance_frame.pack(fill="x", padx=10, pady=(0, 10))
+        guidance_label = ctk.CTkLabel(guidance_frame, text="", font=("Arial", 12, "italic"), text_color="#2c3e50",
+                                      wraplength=800, justify="left")
+        guidance_label.pack(padx=10, pady=5, anchor="w")
 
         for col_idx, slot in enumerate(self.ALL_SLOTS):
             ctk.CTkLabel(grid_container, text=slot.split('-')[0], font=("Arial", 10, "bold"), width=80).grid(row=0,
@@ -180,6 +185,46 @@ class App(ctk.CTk):
         matrix_widgets = []
         preset = DEFAULT_PRESETS.get(key, {})
 
+        def update_description(*args):
+            grup = keyword_ent.get().strip() or "Belirtilmemiş Grup"
+            disinda = " dışında tüm dersler" if inverse_var.get() else ""
+            tip = ctype_menu.get()
+
+            # 1. Adım: Her gün için seçili olan saatleri tuple olarak topla
+            # Örn: {"Pazartesi": ("09:00", "13:00"), "Salı": ("09:00", "13:00")}
+            day_to_slots = {}
+            found = False
+            for d in self.ALL_DAYS:
+                slots_for_day = tuple([s for (day, s), v in matrix_vars.items() if day == d and v.get()])
+                if slots_for_day:
+                    day_to_slots[d] = slots_for_day
+                    found = True
+
+            if not found:
+                guidance_label.configure(text="⚠️ Lütfen tablodan en az bir zaman dilimi seçin.", text_color="#e67e22")
+            else:
+                # 2. Adım: Aynı saat kombinasyonuna sahip günleri grupla
+                # Örn: {("09:00", "13:00"): ["Pazartesi", "Salı"]}
+                slots_to_days = {}
+                for d, slots in day_to_slots.items():
+                    if slots not in slots_to_days:
+                        slots_to_days[slots] = []
+                    slots_to_days[slots].append(d)
+
+                # 3. Adım: Metne dök
+                formatted_parts = []
+                for slots, days in slots_to_days.items():
+                    days_str = ", ".join(days)
+                    slots_str = ", ".join(slots)
+                    formatted_parts.append(f"{days_str} {slots_str}")
+
+                zaman_ifadesi = ", ".join(formatted_parts)
+                eylem = "yerleştirilecek." if tip == "SADECE" else "yerleştirilmeyecek."
+                olumsuzluk = "ASLA " if tip == "ASLA" else "SADECE "
+
+                mesaj = f"ℹ️ {grup} dersler{disinda} {olumsuzluk}{zaman_ifadesi} saatlerine {eylem}"
+                guidance_label.configure(text=mesaj, text_color="#2c3e50")
+
         def update_matrix_style(*args):
             mode = ctype_menu.get()
             color = "#e74c3c" if mode == "ASLA" else "#27ae60"
@@ -187,24 +232,26 @@ class App(ctk.CTk):
             text = "X" if mode == "ASLA" else ""
             for cb in matrix_widgets:
                 cb.configure(fg_color=color, hover_color=hover, text=text)
+            update_description()
 
         for row_idx, day in enumerate(self.ALL_DAYS):
             ctk.CTkLabel(grid_container, text=day[:3], font=("Arial", 10), width=40).grid(row=row_idx + 1, column=0,
                                                                                           padx=5)
             for col_idx, slot in enumerate(self.ALL_SLOTS):
-                # Başlangıç seçimi
                 is_sel = [day, slot] in initial_pairs if initial_pairs is not None else (
                             day in preset.get("days", []) and slot in preset.get("slots", []))
-
                 v = ctk.BooleanVar(value=is_sel)
                 cb = ctk.CTkCheckBox(grid_container, text="", variable=v, width=20, checkbox_width=18,
-                                     checkbox_height=18)
+                                     checkbox_height=18, command=update_description)
                 cb.grid(row=row_idx + 1, column=col_idx + 1, padx=2, pady=2)
                 matrix_vars[(day, slot)] = v
                 matrix_widgets.append(cb)
 
         ctype_menu.configure(command=lambda _: update_matrix_style())
+        keyword_ent.bind("<KeyRelease>", lambda e: update_description())
+
         update_matrix_style()
+        update_description()
 
         self.constraint_rows.append(
             {"frame": row_frame, "keyword": keyword_ent, "type": ctype_menu, "matrix_vars": matrix_vars,
@@ -227,7 +274,7 @@ class App(ctk.CTk):
         while not self.log_queue.empty():
             msg = self.log_queue.get()
             if hasattr(self, 'log_text_widget') and self.log_text_widget.winfo_exists():
-                self.log_text_widget.insert("end", msg);
+                self.log_text_widget.insert("end", msg)
                 self.log_text_widget.see("end")
         self.after(50, self.check_queue)
 
@@ -274,10 +321,8 @@ class App(ctk.CTk):
                 excel.tam_program_raporu(exam_name, "sinav_takvimi_tam_rapor.xlsx")
                 html.rapor_olustur(out_name, "ders_programi_takvim.html", "📅 Haftalık Ders Programı", "#1a73e8")
                 html.rapor_olustur(exam_name, "sinav_takvimi_takvim.html", "✍️ Dönem Sonu Sınav Takvimi", "#d32f2f")
-                htmlxv2.rapor_olustur_v2(out_name, "ders_programi_tablo.html",
-                                         "📅 Ders Programı", "#1a73e8")
-                htmlxv2.rapor_olustur_v2(exam_name, "sinav_takvimi_tablo.html",
-                                         "✍️ Sınav Takvimi", "#d32f2f")
+                htmlxv2.rapor_olustur_v2(out_name, "ders_programi_tablo.html", "📅 Ders Programı", "#1a73e8")
+                htmlxv2.rapor_olustur_v2(exam_name, "sinav_takvimi_tablo.html", "✍️ Sınav Takvimi", "#d32f2f")
                 print(f"\n✅ İŞLEM TAMAM: Seçimlere göre program hazırlandı.")
             else:
                 print("\n⚠️ Çözüm bulunamadı.")
