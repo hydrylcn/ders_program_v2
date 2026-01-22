@@ -3,8 +3,8 @@ import re
 import os
 import sys
 
-def rapor_olustur(file_path='isletme_ders_programi.xlsx', output_name="ders_programi_takvim.html",
-                  baslik="📅 İşletme Bölümü Haftalık Ders Programı", ana_renk="#1a73e8"):
+def rapor_olustur(file_path='ders_programi.xlsx', output_name="ders_programi_takvim.html",
+                  baslik="📅 Haftalık Ders Programı", ana_renk="#1a73e8"):
     try:
         # --- DOSYA YOLU AYARLARI ---
         if getattr(sys, 'frozen', False):
@@ -230,5 +230,5 @@ def rapor_olustur(file_path='isletme_ders_programi.xlsx', output_name="ders_prog
         print(f"❌ Hata: {e}")
 
 if __name__ == "__main__":
-    rapor_olustur(file_path='isletme_ders_programi.xlsx', output_name="ders_programi_takvim.html", baslik="📅 İşletme Bölümü Haftalık Ders Programı", ana_renk="#1a73e8")
-    rapor_olustur(file_path='isletme_sinav_takvimi.xlsx', output_name="sinav_takvimi_takvim.html", baslik="📝 İşletme Bölümü Sınav Takvimi", ana_renk="#d32f2f")
+    rapor_olustur(file_path='ders_programi.xlsx', output_name="ders_programi_takvim.html", baslik="📅 Haftalık Ders Programı", ana_renk="#1a73e8")
+    rapor_olustur(file_path='sinav_takvimi.xlsx', output_name="sinav_takvimi_takvim.html", baslik="📝 Sınav Takvimi", ana_renk="#d32f2f")

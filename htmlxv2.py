@@ -3,7 +3,7 @@ import re
 import os
 import sys
 
-def rapor_olustur_v2(file_path='isletme_ders_programi.xlsx', output_name="ders_programi_tablo.html",
+def rapor_olustur_v2(file_path='ders_programi.xlsx', output_name="ders_programi_tablo.html",
                      baslik="📅 İktisadi İdari Bilimler Ders Programı", ana_renk="#1a73e8"):
     try:
         if getattr(sys, 'frozen', False):
@@ -165,5 +165,5 @@ def rapor_olustur_v2(file_path='isletme_ders_programi.xlsx', output_name="ders_p
         print(f"❌ Hata: {e}")
 
 if __name__ == "__main__":
-    rapor_olustur_v2(file_path='isletme_ders_programi.xlsx', output_name="ders_programi_tablo.html", baslik="📅 İktisadi İdari Bilimler Ders Programı", ana_renk="#1a73e8")
-    rapor_olustur_v2(file_path='isletme_sinav_takvimi.xlsx', output_name="sinav_takvimi_tablo.html", baslik="✍️ İktisadi İdari Bilimler Sınav Takvimi", ana_renk="#d32f2f")
+    rapor_olustur_v2(file_path='ders_programi.xlsx', output_name="ders_programi_tablo.html", baslik="📅 Ders Programı", ana_renk="#1a73e8")
+    rapor_olustur_v2(file_path='sinav_takvimi.xlsx', output_name="sinav_takvimi_tablo.html", baslik="✍️ Sınav Takvimi", ana_renk="#d32f2f")

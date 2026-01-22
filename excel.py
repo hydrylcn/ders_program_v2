@@ -3,7 +3,7 @@ import re
 import os
 
 
-def tam_program_raporu(input_file='isletme_ders_programi.xlsx', output_file='ders_programi.xlsx'):
+def tam_program_raporu(input_file='ders_programi.xlsx', output_file='ders_programi.xlsx'):
     if not os.path.exists(input_file):
         print(f"❌ Hata: {input_file} bulunamadı.")
         return

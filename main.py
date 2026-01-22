@@ -13,17 +13,14 @@ import ders
 import html
 import htmlxv2
 
-# Grupların varsayılan gün ve saat ayarları
+# Grupların varsayılan gün ve saat ayarları (3. Sınıf için özel matris tanımı)
 DEFAULT_PRESETS = {
     "Tezsiz": {
         "days": ["Pazartesi", "Salı", "Çarşamba", "Perşembe", "Cuma"],
         "slots": ["19:00-21:00"]
-    },
-    "Seçmeli": {
-        "days": ["Çarşamba"],
-        "slots": ["09:00-12:00", "13:00-16:00", "16:00-19:00", "19:00-21:00"]
     }
 }
+
 
 class ConsoleRedirector:
     def __init__(self, log_queue):
@@ -41,14 +38,12 @@ class App(ctk.CTk):
         super().__init__()
         ctk.set_appearance_mode("light")
         self.title("Ders Programı Planlama Paneli")
-        width, height = 900, 1000
+        width, height = 950, 1000
 
         screen_w = self.winfo_screenwidth()
         screen_h = self.winfo_screenheight()
-
         x = (screen_w - width) // 2
         y = (screen_h - height) // 2
-
         self.geometry(f"{width}x{height}+{x}+{y}")
         self.configure(fg_color="white")
 
@@ -83,21 +78,30 @@ class App(ctk.CTk):
         top_settings = ctk.CTkFrame(self.scroll_frame, fg_color="transparent")
         top_settings.pack(fill="x")
         self.max_trials_ent = self.add_input("Max Deneme:", "30", master=top_settings, side="left")
-        self.timeout_ent = self.add_input("Zaman Aşımı (sn):", "10", master=top_settings, side="left")
+        self.timeout_ent = self.add_input("Zaman Aşımı (sn):", "30", master=top_settings, side="left")
 
         self.max_days_ent = self.add_input("Dersler kaç güne toplansın?:", "3")
         self.min_gap_ent = self.add_input("Ders aralarında boşluk (0,1,2):", "1")
 
-        self.add_section("3. ÖZEL KISIT TANIMLARI (X = Tersini Seç)")
+        self.add_section("3. ÖZEL KISIT TANIMLARI")
         self.constraints_container = ctk.CTkFrame(self.scroll_frame, fg_color="#f0f0f0", corner_radius=10)
         self.constraints_container.pack(fill="x", padx=10, pady=10)
 
         ctk.CTkButton(self.scroll_frame, text="+ Yeni Kısıt Ekle", command=self.add_constraint_row,
                       fg_color="#3498db", hover_color="#2980b9").pack(pady=10)
 
-        self.add_constraint_row("Tezsiz", "ONLY", is_inverse=False)
-        self.add_constraint_row("Tezsiz", "NEVER", is_inverse=True)
-        self.add_constraint_row("Seçmeli", "ONLY", is_inverse=False)
+        # --- GÜNCELLENMİŞ DEFAULT KISITLAR ---
+        self.add_constraint_row("Tezsiz", "SADECE")
+        self.add_constraint_row("Tezsiz", "ASLA", is_inverse=True)
+
+        # 3. Sınıf Kısıtı: Sadece SADECE, Çarşamba 13-16 hariç tüm gündüz saatleri seçili
+        s3_pairs = []
+        for d in self.ALL_DAYS:
+            s3_pairs.append([d, "09:00-12:00"])
+            if d != "Çarşamba":  # Çarşamba günü 13:00-16:00 eklenmiyor
+                s3_pairs.append([d, "13:00-16:00"])
+
+        self.add_constraint_row("3. Sınıf", "SADECE", initial_pairs=s3_pairs)
 
     def add_section(self, text):
         ctk.CTkLabel(self.scroll_frame, text=text, font=("Arial", 14, "bold"), text_color="#34495e").pack(anchor="w",
@@ -130,67 +134,80 @@ class App(ctk.CTk):
             entry.delete(0, "end")
             entry.insert(0, filename)
 
-    def add_constraint_row(self, key="", t="ONLY", is_inverse=False):
+    def add_constraint_row(self, key="", t="SADECE", is_inverse=False, initial_pairs=None):
         row_frame = ctk.CTkFrame(self.constraints_container, fg_color="white", corner_radius=8, border_width=1,
-                                 border_color="#ddd")
+                                 border_color="#ccc")
         row_frame.pack(fill="x", padx=10, pady=10)
 
         top_line = ctk.CTkFrame(row_frame, fg_color="transparent")
         top_line.pack(fill="x", padx=10, pady=5)
 
-        options = ["Tezsiz", "Tezli", "Doktora", "1. Sınıf", "2. Sınıf", "3. Sınıf", "4. Sınıf", "Seçmeli", "Zorunlu", "Özel..."]
-
-        keyword = ctk.CTkEntry(top_line, placeholder_text="Grup Adı", width=150)
-        keyword.insert(0, key)
-
-        def on_dropdown_change(choice):
-            if choice == "Özel...":
-                keyword.delete(0, "end")
-                keyword.focus()
-            else:
-                keyword.delete(0, "end")
-                keyword.insert(0, choice)
+        options = ["Tezsiz", "Tezli", "Doktora", "1. Sınıf", "2. Sınıf", "3. Sınıf", "4. Sınıf", "Seçmeli", "Zorunlu",
+                   "Özel..."]
+        keyword_ent = ctk.CTkEntry(top_line, placeholder_text="Grup Adı", width=150)
+        keyword_ent.insert(0, key)
 
         menu_val = key if key in options else "Özel..."
-        group_menu = ctk.CTkOptionMenu(top_line, values=options, command=on_dropdown_change, width=120)
-        group_menu.set(menu_val)
+        group_menu = ctk.CTkOptionMenu(top_line, values=options, command=lambda c: (keyword_ent.delete(0, "end"),
+                                                                                    keyword_ent.insert(0,
+                                                                                                       c if c != "Özel..." else ""),
+                                                                                    keyword_ent.focus() if c == "Özel..." else None),
+                                       width=120)
+        group_menu.set(menu_val);
         group_menu.pack(side="left", padx=5)
-
-        keyword.pack(side="left", padx=5)
+        keyword_ent.pack(side="left", padx=5)
 
         inverse_var = ctk.BooleanVar(value=is_inverse)
-        inverse_cb = ctk.CTkCheckBox(top_line, text="X", variable=inverse_var, width=40, font=("Arial", 12, "bold"))
-        inverse_cb.pack(side="left", padx=5)
+        ctk.CTkCheckBox(top_line, text="DIŞINDA", variable=inverse_var, width=40, font=("Arial", 12, "bold")).pack(
+            side="left", padx=5)
 
-        ctype = ctk.CTkOptionMenu(top_line, values=["ONLY", "NEVER"], width=100)
-        ctype.set(t)
-        ctype.pack(side="left", padx=5)
+        ctype_menu = ctk.CTkOptionMenu(top_line, values=["SADECE", "ASLA"], width=100)
+        ctype_menu.set(t);
+        ctype_menu.pack(side="left", padx=5)
 
         ctk.CTkButton(top_line, text="Sil", width=50, fg_color="#e74c3c",
                       command=lambda f=row_frame: self.remove_row(f)).pack(side="right")
 
+        grid_container = ctk.CTkFrame(row_frame, fg_color="#f9f9f9", corner_radius=5)
+        grid_container.pack(fill="x", padx=10, pady=5)
+
+        for col_idx, slot in enumerate(self.ALL_SLOTS):
+            ctk.CTkLabel(grid_container, text=slot.split('-')[0], font=("Arial", 10, "bold"), width=80).grid(row=0,
+                                                                                                             column=col_idx + 1,
+                                                                                                             pady=2)
+
+        matrix_vars = {}
+        matrix_widgets = []
         preset = DEFAULT_PRESETS.get(key, {})
 
-        days_frame = ctk.CTkFrame(row_frame, fg_color="#f9f9f9")
-        days_frame.pack(fill="x", padx=10, pady=2)
-        day_vars = {}
-        for day in self.ALL_DAYS:
-            is_day_sel = (day in preset["days"]) if "days" in preset else True
-            v = ctk.BooleanVar(value=is_day_sel)
-            ctk.CTkCheckBox(days_frame, text=day, variable=v).pack(side="left", padx=8)
-            day_vars[day] = v
+        def update_matrix_style(*args):
+            mode = ctype_menu.get()
+            color = "#e74c3c" if mode == "ASLA" else "#27ae60"
+            hover = "#c0392b" if mode == "ASLA" else "#2ecc71"
+            text = "X" if mode == "ASLA" else ""
+            for cb in matrix_widgets:
+                cb.configure(fg_color=color, hover_color=hover, text=text)
 
-        slots_frame = ctk.CTkFrame(row_frame, fg_color="#f9f9f9")
-        slots_frame.pack(fill="x", padx=10, pady=2)
-        slot_vars = {}
-        for slot in self.ALL_SLOTS:
-            is_slot_sel = (slot in preset["slots"]) if "slots" in preset else True
-            v = ctk.BooleanVar(value=is_slot_sel)
-            ctk.CTkCheckBox(slots_frame, text=slot, variable=v).pack(side="left", padx=8)
-            slot_vars[slot] = v
+        for row_idx, day in enumerate(self.ALL_DAYS):
+            ctk.CTkLabel(grid_container, text=day[:3], font=("Arial", 10), width=40).grid(row=row_idx + 1, column=0,
+                                                                                          padx=5)
+            for col_idx, slot in enumerate(self.ALL_SLOTS):
+                # Başlangıç seçimi
+                is_sel = [day, slot] in initial_pairs if initial_pairs is not None else (
+                            day in preset.get("days", []) and slot in preset.get("slots", []))
+
+                v = ctk.BooleanVar(value=is_sel)
+                cb = ctk.CTkCheckBox(grid_container, text="", variable=v, width=20, checkbox_width=18,
+                                     checkbox_height=18)
+                cb.grid(row=row_idx + 1, column=col_idx + 1, padx=2, pady=2)
+                matrix_vars[(day, slot)] = v
+                matrix_widgets.append(cb)
+
+        ctype_menu.configure(command=lambda _: update_matrix_style())
+        update_matrix_style()
 
         self.constraint_rows.append(
-            {"frame": row_frame, "keyword": keyword, "type": ctype, "day_vars": day_vars, "slot_vars": slot_vars,
+            {"frame": row_frame, "keyword": keyword_ent, "type": ctype_menu, "matrix_vars": matrix_vars,
              "inverse_var": inverse_var})
 
     def remove_row(self, frame):
@@ -210,39 +227,34 @@ class App(ctk.CTk):
         while not self.log_queue.empty():
             msg = self.log_queue.get()
             if hasattr(self, 'log_text_widget') and self.log_text_widget.winfo_exists():
-                self.log_text_widget.insert("end", msg)
+                self.log_text_widget.insert("end", msg);
                 self.log_text_widget.see("end")
         self.after(50, self.check_queue)
 
     def start_thread(self):
         self.open_log_popup()
         self.run_btn.configure(state="disabled", text="HESAPLANIYOR...")
-
-        # --- DÜZELTME: Kısıtları Sözlük Yerine Liste Olarak Topluyoruz ---
         spec_cons_list = []
         for row in self.constraint_rows:
             k = row["keyword"].get().strip()
             if k:
+                selected_pairs = [[d, s] for (d, s), v in row["matrix_vars"].items() if v.get()]
                 spec_cons_list.append({
                     "keyword": "!" + k if row["inverse_var"].get() else k,
                     "type": row["type"].get(),
-                    "days": [d for d, v in row["day_vars"].items() if v.get()],
-                    "slots": [s for s, v in row["slot_vars"].items() if v.get()]
+                    "selected_slots": selected_pairs
                 })
 
         base_dir = os.path.dirname(sys.executable) if getattr(sys, 'frozen', False) else os.getcwd()
         db_path = os.path.join(base_dir, "okul.db")
-
         self.ayarlar = {
-            "DAYS": self.ALL_DAYS,
-            "SLOTS": self.ALL_SLOTS,
-            "DB_PATH": db_path,
+            "DAYS": self.ALL_DAYS, "SLOTS": self.ALL_SLOTS, "DB_PATH": db_path,
             "PREF_FILE": os.path.abspath(self.pref_file_ent.get()),
             "CONSTR_FILE": os.path.abspath(self.constr_file_ent.get()),
             "OUTPUT_FILE": os.path.abspath(self.output_file_ent.get()),
             "MAX_TRIALS": int(self.max_trials_ent.get() or 30),
-            "TRIAL_TIMEOUT": int(self.timeout_ent.get() or 10),
-            "SPECIAL_CONSTRAINTS": spec_cons_list, # Artık bir liste
+            "TRIAL_TIMEOUT": int(self.timeout_ent.get() or 30),
+            "SPECIAL_CONSTRAINTS": spec_cons_list,
             "MAX_DAYS_PER_LECTURER": int(self.max_days_ent.get() or 3),
             "MIN_SLOT_GAP": int(self.min_gap_ent.get() or 1) + 1
         }
@@ -253,26 +265,20 @@ class App(ctk.CTk):
         sys.stdout = ConsoleRedirector(self.log_queue)
         try:
             excel_yolu = os.path.abspath(self.dersler_excel_ent.get())
-            if os.path.exists(excel_yolu):
-                db.veritabanini_guncelle(excel_yolu)
-
+            if os.path.exists(excel_yolu): db.veritabanini_guncelle(excel_yolu)
             if ders.arayuzden_baslat(self.ayarlar):
                 out_name = os.path.basename(self.ayarlar["OUTPUT_FILE"])
                 exam_name = "isletme_sinav_takvimi.xlsx"
-
                 import excel
                 excel.tam_program_raporu(out_name, "ders_programi_tam_rapor.xlsx")
                 excel.tam_program_raporu(exam_name, "sinav_takvimi_tam_rapor.xlsx")
-
                 html.rapor_olustur(out_name, "ders_programi_takvim.html", "📅 Haftalık Ders Programı", "#1a73e8")
                 html.rapor_olustur(exam_name, "sinav_takvimi_takvim.html", "✍️ Dönem Sonu Sınav Takvimi", "#d32f2f")
-
                 htmlxv2.rapor_olustur_v2(out_name, "ders_programi_tablo.html",
                                          "📅 İktisadi İdari Bilimler Ders Programı", "#1a73e8")
                 htmlxv2.rapor_olustur_v2(exam_name, "sinav_takvimi_tablo.html",
                                          "✍️ İktisadi İdari Bilimler Sınav Takvimi", "#d32f2f")
-
-                print(f"\n✅ İŞLEM TAMAM: Tüm Excel ve HTML çıktıları (Ders + Sınav) oluşturuldu.")
+                print(f"\n✅ İŞLEM TAMAM: Seçili matris hücrelerine göre program hazırlandı.")
             else:
                 print("\n⚠️ Çözüm bulunamadı.")
         except Exception as e:

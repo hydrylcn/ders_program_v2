@@ -7,7 +7,6 @@ import copy
 import time
 
 
-# --- YOL YÖNETİMİ ---
 def resource_path(relative_path):
     if hasattr(sys, '_MEIPASS'):
         return os.path.join(sys._MEIPASS, relative_path)
@@ -28,7 +27,6 @@ class Scheduler:
         self.MAX_DAYS_PER_LECTURER = ayarlar.get("MAX_DAYS_PER_LECTURER", 3)
         self.MIN_SLOT_GAP = ayarlar.get("MIN_SLOT_GAP", 1)
         self.TRIAL_TIMEOUT = ayarlar.get("TRIAL_TIMEOUT", 10)
-        # Liste yapısını kabul et
         self.SPECIAL_CONSTRAINTS = ayarlar.get("SPECIAL_CONSTRAINTS", [])
         self.HOCA_GUN_CEZASI = 500
         self.class_limits = {}
@@ -40,15 +38,12 @@ class Scheduler:
             cls_str = str(cls)
             current_limit = 1
             is_affected_by_constraint = False
-
-            # Liste üzerinde güvenli döngü
             for rules in self.SPECIAL_CONSTRAINTS:
                 keyword = rules.get("keyword", "")
                 is_match = (keyword[1:] not in cls_str) if keyword.startswith("!") else (keyword in cls_str)
                 if is_match:
                     is_affected_by_constraint = True
                     break
-
             if is_affected_by_constraint:
                 current_limit = 10
             elif count > (len(self.DAYS) * len(self.SLOTS)):
@@ -62,20 +57,23 @@ class Scheduler:
         durum_bilgisi = str(assignment.get('durum', ""))
         arama_metni = (sinif_adi + " " + durum_bilgisi).upper()
 
-        # --- LİSTE ÜZERİNDEN KISIT KONTROLÜ ---
+        # --- MATRİS TABANLI KISIT KONTROLÜ ---
         for rules in self.SPECIAL_CONSTRAINTS:
             keyword = rules.get("keyword", "")
             clean_keyword = keyword[1:].upper() if keyword.startswith("!") else keyword.upper()
             is_match = (clean_keyword not in arama_metni) if keyword.startswith("!") else (clean_keyword in arama_metni)
 
             if is_match:
-                ctype = rules.get("type", "ONLY")
-                if ctype == "ONLY":
-                    if day not in rules['days'] or slot not in rules['slots']:
-                        return False
-                elif ctype == "NEVER":
-                    if day in rules['days'] and slot in rules['slots']:
-                        return False
+                ctype = rules.get("type", "SADECE")
+                selected_pairs = rules.get("selected_slots", [])  # [[gün, saat], ...]
+                current_pair = [day, slot]
+
+                is_in_selection = current_pair in selected_pairs
+
+                if ctype == "SADECE" and not is_in_selection:
+                    return False
+                elif ctype == "ASLA" and is_in_selection:
+                    return False
 
         hoca_adi = assignment.get('isim', "").strip()
         if self.constraints.get((hoca_adi, day, slot)) == 0: return False
@@ -111,8 +109,6 @@ class Scheduler:
         for d in self.DAYS:
             for s in self.SLOTS:
                 skip_slot = False
-
-                # --- LİSTE ÜZERİNDEN SLOT KONTROLÜ ---
                 for rules in self.SPECIAL_CONSTRAINTS:
                     keyword = rules.get("keyword", "")
                     clean_keyword = keyword[1:].upper() if keyword.startswith("!") else keyword.upper()
@@ -120,15 +116,18 @@ class Scheduler:
                                 clean_keyword in arama_metni)
 
                     if is_match:
-                        if rules.get("type") == "ONLY" and (d not in rules['days'] or s not in rules['slots']):
+                        ctype = rules.get("type", "SADECE")
+                        selected_pairs = rules.get("selected_slots", [])
+                        is_in_selection = [d, s] in selected_pairs
+
+                        if ctype == "SADECE" and not is_in_selection:
                             skip_slot = True
                             break
-                        if rules.get("type") == "NEVER" and (d in rules['days'] and s in rules['slots']):
+                        if ctype == "ASLA" and is_in_selection:
                             skip_slot = True
                             break
 
-                if skip_slot:
-                    continue
+                if skip_slot: continue
 
                 class_load = sum(1 for e in self.schedule if
                                  e['day'] == d and e['slot'] == s and e.get('sinif') == assignment.get('sinif'))
