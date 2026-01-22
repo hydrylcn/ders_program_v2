@@ -28,21 +28,27 @@ class Scheduler:
         self.MAX_DAYS_PER_LECTURER = ayarlar.get("MAX_DAYS_PER_LECTURER", 3)
         self.MIN_SLOT_GAP = ayarlar.get("MIN_SLOT_GAP", 1)
         self.TRIAL_TIMEOUT = ayarlar.get("TRIAL_TIMEOUT", 10)
-        self.SPECIAL_CONSTRAINTS = ayarlar.get("SPECIAL_CONSTRAINTS", {})
+        # Liste yapısını kabul et
+        self.SPECIAL_CONSTRAINTS = ayarlar.get("SPECIAL_CONSTRAINTS", [])
         self.HOCA_GUN_CEZASI = 500
         self.class_limits = {}
         counts = {}
         for a in assignments:
             counts[a['sinif']] = counts.get(a['sinif'], 0) + 1
+
         for cls, count in counts.items():
             cls_str = str(cls)
             current_limit = 1
             is_affected_by_constraint = False
-            for keyword, rules in self.SPECIAL_CONSTRAINTS.items():
+
+            # Liste üzerinde güvenli döngü
+            for rules in self.SPECIAL_CONSTRAINTS:
+                keyword = rules.get("keyword", "")
                 is_match = (keyword[1:] not in cls_str) if keyword.startswith("!") else (keyword in cls_str)
                 if is_match:
                     is_affected_by_constraint = True
                     break
+
             if is_affected_by_constraint:
                 current_limit = 10
             elif count > (len(self.DAYS) * len(self.SLOTS)):
@@ -56,30 +62,36 @@ class Scheduler:
         durum_bilgisi = str(assignment.get('durum', ""))
         arama_metni = (sinif_adi + " " + durum_bilgisi).upper()
 
-        for keyword, rules in self.SPECIAL_CONSTRAINTS.items():
+        # --- LİSTE ÜZERİNDEN KISIT KONTROLÜ ---
+        for rules in self.SPECIAL_CONSTRAINTS:
+            keyword = rules.get("keyword", "")
             clean_keyword = keyword[1:].upper() if keyword.startswith("!") else keyword.upper()
             is_match = (clean_keyword not in arama_metni) if keyword.startswith("!") else (clean_keyword in arama_metni)
 
             if is_match:
                 ctype = rules.get("type", "ONLY")
                 if ctype == "ONLY":
-                    if day not in rules['days'] or slot not in rules['slots']: return False
+                    if day not in rules['days'] or slot not in rules['slots']:
+                        return False
                 elif ctype == "NEVER":
-                    if day in rules['days'] and slot in rules['slots']: return False
+                    if day in rules['days'] and slot in rules['slots']:
+                        return False
 
         hoca_adi = assignment.get('isim', "").strip()
         if self.constraints.get((hoca_adi, day, slot)) == 0: return False
+
         current_slot_idx = self.SLOTS.index(slot)
         for entry in self.schedule:
             if entry.get('isim', "").strip() == hoca_adi and entry['day'] == day:
                 if abs(current_slot_idx - self.SLOTS.index(entry['slot'])) < self.MIN_SLOT_GAP: return False
+
         class_count_in_slot = 0
         for entry in self.schedule:
             if entry['day'] == day and entry['slot'] == slot:
-                # uye_id yerine isim kontrolü yapılıyor
                 if entry['isim'] == assignment['isim']: return False
                 if entry['classroom'] == classroom_name: return False
                 if entry.get('sinif') == assignment.get('sinif'): class_count_in_slot += 1
+
         return class_count_in_slot < self.class_limits.get(assignment.get('sinif'), 1)
 
     def backtrack(self, index=0):
@@ -99,23 +111,30 @@ class Scheduler:
         for d in self.DAYS:
             for s in self.SLOTS:
                 skip_slot = False
-                for keyword, rules in self.SPECIAL_CONSTRAINTS.items():
+
+                # --- LİSTE ÜZERİNDEN SLOT KONTROLÜ ---
+                for rules in self.SPECIAL_CONSTRAINTS:
+                    keyword = rules.get("keyword", "")
                     clean_keyword = keyword[1:].upper() if keyword.startswith("!") else keyword.upper()
                     is_match = (clean_keyword not in arama_metni) if keyword.startswith("!") else (
                                 clean_keyword in arama_metni)
 
                     if is_match:
                         if rules.get("type") == "ONLY" and (d not in rules['days'] or s not in rules['slots']):
-                            skip_slot = True;
+                            skip_slot = True
                             break
                         if rules.get("type") == "NEVER" and (d in rules['days'] and s in rules['slots']):
-                            skip_slot = True;
+                            skip_slot = True
                             break
-                if skip_slot: continue
+
+                if skip_slot:
+                    continue
+
                 class_load = sum(1 for e in self.schedule if
                                  e['day'] == d and e['slot'] == s and e.get('sinif') == assignment.get('sinif'))
                 hoca_o_gun_orada = any(e['day'] == d and e.get('isim') == assignment.get('isim') for e in self.schedule)
                 global_load = sum(1 for e in self.schedule if e['day'] == d and e['slot'] == s)
+
                 if class_load < self.class_limits.get(assignment.get('sinif'), 1):
                     potential_slots.append((d, s, class_load, not hoca_o_gun_orada, global_load))
 
@@ -148,7 +167,6 @@ class Scheduler:
 
 def get_data(db_path):
     conn = sqlite3.connect(db_path)
-    # JOIN kaldırıldı, veriler doğrudan tek tablodan çekiliyor
     query = "SELECT isim, ders_adi, sinif, kontenjan, durum FROM OgretimUyeleriDersler"
     raw = pd.read_sql_query(query, conn).to_dict('records')
     final = [r for r in raw if r['sinif']]

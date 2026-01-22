@@ -95,7 +95,6 @@ class App(ctk.CTk):
         ctk.CTkButton(self.scroll_frame, text="+ Yeni Kısıt Ekle", command=self.add_constraint_row,
                       fg_color="#3498db", hover_color="#2980b9").pack(pady=10)
 
-        # BURASI: Toplam 3 adet default ayar
         self.add_constraint_row("Tezsiz", "ONLY", is_inverse=False)
         self.add_constraint_row("Tezsiz", "NEVER", is_inverse=True)
         self.add_constraint_row("Seçmeli", "ONLY", is_inverse=False)
@@ -219,16 +218,17 @@ class App(ctk.CTk):
         self.open_log_popup()
         self.run_btn.configure(state="disabled", text="HESAPLANIYOR...")
 
-        spec_cons = {}
+        # --- DÜZELTME: Kısıtları Sözlük Yerine Liste Olarak Topluyoruz ---
+        spec_cons_list = []
         for row in self.constraint_rows:
             k = row["keyword"].get().strip()
             if k:
-                final_key = "!" + k if row["inverse_var"].get() else k
-                spec_cons[final_key] = {
+                spec_cons_list.append({
+                    "keyword": "!" + k if row["inverse_var"].get() else k,
                     "type": row["type"].get(),
                     "days": [d for d, v in row["day_vars"].items() if v.get()],
                     "slots": [s for s, v in row["slot_vars"].items() if v.get()]
-                }
+                })
 
         base_dir = os.path.dirname(sys.executable) if getattr(sys, 'frozen', False) else os.getcwd()
         db_path = os.path.join(base_dir, "okul.db")
@@ -242,7 +242,7 @@ class App(ctk.CTk):
             "OUTPUT_FILE": os.path.abspath(self.output_file_ent.get()),
             "MAX_TRIALS": int(self.max_trials_ent.get() or 30),
             "TRIAL_TIMEOUT": int(self.timeout_ent.get() or 10),
-            "SPECIAL_CONSTRAINTS": spec_cons,
+            "SPECIAL_CONSTRAINTS": spec_cons_list, # Artık bir liste
             "MAX_DAYS_PER_LECTURER": int(self.max_days_ent.get() or 3),
             "MIN_SLOT_GAP": int(self.min_gap_ent.get() or 1) + 1
         }
@@ -260,13 +260,9 @@ class App(ctk.CTk):
                 out_name = os.path.basename(self.ayarlar["OUTPUT_FILE"])
                 exam_name = "isletme_sinav_takvimi.xlsx"
 
-                # --- YENİ EKLENEN KISIM: excel.py çağrısı ---
                 import excel
-                # Ders programı için hem liste hem takvim içeren Excel oluştur
                 excel.tam_program_raporu(out_name, "ders_programi_tam_rapor.xlsx")
-                # Sınav takvimi için hem liste hem takvim içeren Excel oluştur
                 excel.tam_program_raporu(exam_name, "sinav_takvimi_tam_rapor.xlsx")
-                # --------------------------------------------
 
                 html.rapor_olustur(out_name, "ders_programi_takvim.html", "📅 Haftalık Ders Programı", "#1a73e8")
                 html.rapor_olustur(exam_name, "sinav_takvimi_takvim.html", "✍️ Dönem Sonu Sınav Takvimi", "#d32f2f")
