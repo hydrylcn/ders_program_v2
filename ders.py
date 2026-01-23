@@ -302,7 +302,7 @@ def arayuzden_baslat(ayarlar):
         if best_schedule:
             save_to_master_excel(best_schedule, best_score, ayarlar["OUTPUT_FILE"], ayarlar["DAYS"], ayarlar["SLOTS"])
             save_exam_schedule(best_schedule,
-                               os.path.join(os.path.dirname(ayarlar["OUTPUT_FILE"]), "isletme_sinav_takvimi.xlsx"),
+                               os.path.join(os.path.dirname(ayarlar["OUTPUT_FILE"]), "sinav_takvimi.xlsx"),
                                classrooms, ayarlar["DAYS"], ayarlar["SLOTS"])
             report_final(best_schedule, best_score, ayarlar["MAX_DAYS_PER_LECTURER"])
             return True
